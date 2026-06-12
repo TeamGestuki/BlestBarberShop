@@ -303,19 +303,39 @@ img { max-width: 100%; }
   background-color: var(--gold);
   overflow: hidden;
   padding: 10px 0;
+  width: 100%;
+  position: relative;
 }
+
 .announcement-track {
   display: flex;
-  white-space: nowrap;
+  width: max-content;
   animation: ticker 25s linear infinite;
+}
+
+.announcement-content {
+  display: flex;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.announcement-content span {
   font-family: var(--font-display);
   font-size: 14px;
   letter-spacing: 2px;
   color: #0A0A0A;
+  white-space: nowrap;
+  padding-right: 50px;
 }
+
 @keyframes ticker {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* ---- ABOUT ---- */
