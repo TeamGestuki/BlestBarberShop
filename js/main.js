@@ -1,5 +1,5 @@
 /* ============================================================
-   EL FILO — BARBERÍA | JavaScript principal
+   BLEST BARBER — BARBERÍA | JavaScript principal
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -78,28 +78,54 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ---- FORMULARIO DE REGISTRO: validación de contraseñas ---- */
-  const registerForm = document.getElementById('registerForm');
-  if (registerForm) {
-    const pass1 = registerForm.querySelector('#password');
-    const pass2 = registerForm.querySelector('#password_confirm');
+ const registerForm = document.getElementById('registerForm');
 
-    registerForm.addEventListener('submit', function(e) {
-      if (pass1 && pass2 && pass1.value !== pass2.value) {
-        e.preventDefault();
-        pass2.classList.add('is-invalid');
-        const fb = pass2.nextElementSibling;
-        if (fb && fb.classList.contains('invalid-feedback')) {
-          fb.textContent = 'Las contraseñas no coinciden.';
-        }
-      }
-    });
+if (registerForm) {
+  const pass1 = registerForm.querySelector('#password');
+  const pass2 = registerForm.querySelector('#password_confirm');
 
-    if (pass2) {
-      pass2.addEventListener('input', () => {
-        pass2.classList.toggle('is-invalid', pass1.value !== pass2.value);
-      });
+  registerForm.addEventListener('submit', function(e) {
+
+    // Validación Bootstrap (required, checkbox, etc.)
+    if (!registerForm.checkValidity()) {
+      e.preventDefault();
+      e.stopPropagation();
     }
+
+    // Validación de contraseñas
+    if (pass1 && pass2 && pass1.value !== pass2.value) {
+      e.preventDefault();
+
+      pass2.classList.add('is-invalid');
+
+      const fb = pass2.nextElementSibling;
+      if (fb && fb.classList.contains('invalid-feedback')) {
+        fb.textContent = 'Las contraseñas no coinciden.';
+      }
+    }
+
+    registerForm.classList.add('was-validated');
+  });
+
+  // Validación en tiempo real password confirm
+  if (pass2) {
+    pass2.addEventListener('input', () => {
+
+      const passwordsMatch = pass1.value === pass2.value;
+      const passwordValid = pass1.value.length >= 8;
+
+      pass2.classList.toggle(
+        'is-invalid',
+        !passwordsMatch || !passwordValid
+      );
+
+      pass2.classList.toggle(
+        'is-valid',
+        passwordsMatch && passwordValid
+      );
+    });
   }
+}
 
   /* ---- SELECTOR DE TURNO: deshabilitar fechas pasadas ---- */
   const dateInput = document.getElementById('fecha_turno');

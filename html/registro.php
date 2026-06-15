@@ -1,3 +1,7 @@
+<?php
+$error = $_GET['error'] ?? '';
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,17 +30,43 @@
       <div class="mb-4">
         <p class="section-eyebrow mb-1">Únete al equipo</p>
         <h1 class="auth-title">CREAR CUENTA</h1>
-        <p class="auth-subtitle">¿Ya tenés cuenta? <a href="login.html" class="text-gold text-decoration-none fw-semibold">Ingresá acá</a></p>
+        <p class="auth-subtitle">¿Ya tenés cuenta? <a href="login.php" class="text-gold text-decoration-none fw-semibold">Ingresá acá</a></p>
       </div>
 
-      <?php if (isset($error)): ?>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i><?= htmlspecialchars($error) ?>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-      </div>
-      <?php endif; ?>
+      <?php if (isset($_GET['error']) && !empty($_GET['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+            style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
 
-      <form action="../procesar/registro.php" method="POST" id="registerForm" novalidate>
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+          <?php
+            if ($error === 'terminos_no_aceptados') {
+              echo 'Tenés que aceptar los términos y condiciones.';
+            } elseif ($error === 'email_existente') {
+              echo 'Ese email ya está registrado.';
+            } elseif ($error === 'email_invalido') {
+              echo 'Ingresá un email válido.';
+            } elseif ($error === 'password_no_coincide') {
+              echo 'Las contraseñas no coinciden.';
+            } elseif ($error === 'password_corta') {
+              echo 'La contraseña debe tener al menos 8 caracteres.';
+            } elseif ($error === 'campos_vacios') {
+              echo 'Completá todos los campos obligatorios.';
+            } else {
+              echo 'Ocurrió un error al registrar la cuenta.';
+            }
+      ?>
+
+  <button type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="alert">
+  </button>
+</div>
+<?php endif; ?>
+
+      <form action="../controllers/AuthController.php" method="POST" id="registerForm" novalidate>
+        <input type="hidden" name="action" value="register">
 
         <div class="row g-3">
 
@@ -107,23 +137,30 @@
             <div class="invalid-feedback" style="font-size:11px;color:#e05555">Las contraseñas no coinciden.</div>
           </div>
 
-          <!-- Indicador de seguridad de contraseña -->
-          <div class="col-12" id="password-strength-wrap" style="display:none">
-            <div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px">
-              <div id="strength-bar" style="height:100%;width:0%;transition:width 0.3s,background 0.3s"></div>
-            </div>
-            <p id="strength-label" style="font-size:10px;color:var(--muted);margin-top:4px;margin-bottom:0"></p>
-          </div>
+         <div class="col-12">
+          <div class="form-check terms-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="terminos"
+              name="terminos"
+              required
+              style="background-color:var(--bg4);border-color:var(--border)"
+            >
 
-          <div class="col-12">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="terminos" name="terminos" required
-                style="background-color:var(--bg4);border-color:var(--border)">
-              <label class="form-check-label" for="terminos" style="font-size:12px;color:var(--muted)">
-                Acepto los <a href="terminos.html" class="text-gold text-decoration-none">términos y condiciones</a> del servicio
-              </label>
+            <label class="form-check-label" for="terminos" style="font-size:12px;color:var(--muted)">
+              Acepto los
+              <a href="terminos.html" class="text-gold text-decoration-none" target="_blank">
+                términos y condiciones
+              </a>
+              del servicio
+            </label>
+
+            <div class="invalid-feedback terms-error">
+              Tenés que aceptar los términos y condiciones.
             </div>
           </div>
+        </div>
 
           <div class="col-12 mt-2">
             <button type="submit" class="btn btn-gold w-100 py-3">

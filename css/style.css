@@ -840,3 +840,45 @@ img { max-width: 100%; }
   .auth-card { padding: 32px 20px; }
   .sede-info-strip { gap: 14px; }
 }
+
+/* ---- LOGIN INPUT GROUPS ---- */
+.auth-input-icon {
+  background: var(--bg4) !important;
+  border: 1px solid var(--border) !important;
+  border-right: none !important;
+  color: var(--muted) !important;
+  border-radius: 2px 0 0 2px !important;
+}
+
+.auth-input {
+  border-left: none !important;
+}
+
+.auth-input-password {
+  border-right: none !important;
+}
+
+.auth-input-button {
+  background: var(--bg4) !important;
+  border: 1px solid var(--border) !important;
+  border-left: none !important;
+  color: var(--muted) !important;
+  border-radius: 0 2px 2px 0 !important;
+  padding: 0 14px !important;
+}
+
+/* ---- ERROR TÉRMINOS REGISTER ---- */
+.was-validated .terms-check .form-check-input:invalid {
+  border-color: #e05555 !important;
+  box-shadow: 0 0 14px rgba(224, 85, 85, 0.45) !important;
+}
+
+.was-validated .terms-check .form-check-input:invalid ~ .form-check-label {
+  color: #ff6b6b !important;
+}
+
+.terms-error {
+  color: #ff6b6b !important;
+  font-size: 12px;
+  margin-top: 6px;
+}

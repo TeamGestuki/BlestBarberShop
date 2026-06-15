@@ -1,3 +1,8 @@
+<?php
+$success = $_GET['success'] ?? '';
+$error = $_GET['error'] ?? '';
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -44,12 +49,12 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link active" href="contacto.html" style="color:var(--gold)!important">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link active" href="contacto.php" style="color:var(--gold)!important">Contacto</a></li>
           <li class="nav-item ms-lg-2">
-            <a class="btn btn-outline-gold btn-sm" href="login.html">Ingresar</a>
+            <a class="btn btn-outline-gold btn-sm" href="login.php">Ingresar</a>
           </li>
           <li class="nav-item ms-lg-1">
-            <a class="btn btn-gold btn-sm" href="registro.html">Reservar turno</a>
+            <a class="btn btn-gold btn-sm" href="registro.php">Reservar turno</a>
           </li>
         </ul>
       </div>
@@ -73,23 +78,43 @@
         <!-- FORMULARIO -->
         <div class="col-lg-7">
 
-          <?php if (isset($exito) && $exito): ?>
-          <div class="alert fade show mb-4" role="alert"
-            style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px;padding:16px 20px">
-            <i class="bi bi-check2-circle me-2"></i>
-            Mensaje enviado correctamente. Te contactaremos a la brevedad.
-          </div>
+          <?php if ($success === '1'): ?>
+            <div class="alert fade show mb-4" role="alert"
+              style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px;padding:16px 20px">
+
+              <i class="bi bi-check2-circle me-2"></i>
+              Mensaje enviado correctamente. Te contactaremos a la brevedad.
+
+            </div>
           <?php endif; ?>
 
-          <?php if (isset($error)): ?>
-          <div class="alert alert-dismissible fade show mb-4" role="alert"
-            style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><?= htmlspecialchars($error) ?>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-          </div>
+          <?php if (!empty($error)): ?>
+            <div class="alert alert-dismissible fade show mb-4"
+                role="alert"
+                style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
+
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+              <?php
+                if ($error === 'campos_vacios') {
+                  echo 'Completá todos los campos obligatorios.';
+                } elseif ($error === 'email_invalido') {
+                  echo 'Ingresá un email válido.';
+                } elseif ($error === 'db_error') {
+                  echo 'Hubo un error al guardar el mensaje.';
+                } else {
+                  echo 'Ocurrió un error al enviar el formulario.';
+                }
+              ?>
+
+              <button type="button"
+                      class="btn-close btn-close-white"
+                      data-bs-dismiss="alert">
+              </button>
+            </div>
           <?php endif; ?>
 
-          <form action="../procesar/contacto.php" method="POST" id="contactForm" novalidate>
+          <form action="../controllers/ContactController.php" method="POST" id="contactForm" novalidate>
             <div class="row g-3">
               <div class="col-sm-6">
                 <label for="nombre" class="form-label">Nombre completo</label>
@@ -203,8 +228,8 @@
         <div class="col-sm-6 col-lg-2">
           <h5 class="footer-heading">Mi cuenta</h5>
           <ul class="footer-links">
-            <li><a href="registro.html">Registrarse</a></li>
-            <li><a href="login.html">Ingresar</a></li>
+            <li><a href="registro.php">Registrarse</a></li>
+            <li><a href="login.php">Ingresar</a></li>
           </ul>
         </div>
         <div class="col-lg-3">
