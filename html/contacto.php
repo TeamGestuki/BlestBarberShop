@@ -19,7 +19,7 @@ $error = $_GET['error'] ?? '';
   <!-- ======================== NAVBAR ======================== -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolled" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="index.html">
+      <a class="navbar-brand" href="index.php">
         <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
@@ -27,8 +27,8 @@ $error = $_GET['error'] ?? '';
       </button>
       <div class="collapse navbar-collapse" id="navbarMenu">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.html#servicios">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.php#servicios">Servicios</a></li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button"
                data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
@@ -36,13 +36,13 @@ $error = $_GET['error'] ?? '';
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" href="SedeNaon.html">
+                <a class="dropdown-item" href="SedeNaon.php">
                   <i class="bi bi-geo-alt-fill"></i>
                   Sede Naón
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="SedeVLuro.html">
+                <a class="dropdown-item" href="SedeVLuro.php">
                   <i class="bi bi-geo-alt-fill"></i>
                   Sede Villa Luro
                 </a>
@@ -158,8 +158,8 @@ $error = $_GET['error'] ?? '';
                 <div>
                   <p style="color:var(--cream);font-size:14px;margin:0;font-weight:600">Sedes</p>
                   <p style="color:var(--muted);font-size:13px;margin:0">
-                    <a href="SedeNaon.html" style="color:var(--gold);text-decoration:none">Sede Naón</a> — Montiel 1551, Barrio Naón<br>
-                    <a href="SedeVLuro.html" style="color:var(--gold);text-decoration:none">Sede Villa Luro</a> — Av. Rivadavia 10545
+                    <a href="SedeNaon.php" style="color:var(--gold);text-decoration:none">Sede Naón</a> — Montiel 1551, Barrio Naón<br>
+                    <a href="SedeVLuro.php" style="color:var(--gold);text-decoration:none">Sede Villa Luro</a> — Av. Rivadavia 10545
                   </p>
                 </div>
               </li>
@@ -219,10 +219,10 @@ $error = $_GET['error'] ?? '';
         <div class="col-sm-6 col-lg-2 offset-lg-1">
           <h5 class="footer-heading">Sitio</h5>
           <ul class="footer-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="index.html#servicios">Servicios</a></li>
-            <li><a href="SedeNaon.html">Sede Naón</a></li>
-            <li><a href="SedeVLuro.html">Sede Villa Luro</a></li>
+            <li><a href="index.php">Inicio</a></li>
+            <li><a href="index.php#servicios">Servicios</a></li>
+            <li><a href="SedeNaon.php">Sede Naón</a></li>
+            <li><a href="SedeVLuro.php">Sede Villa Luro</a></li>
           </ul>
         </div>
         <div class="col-sm-6 col-lg-2">

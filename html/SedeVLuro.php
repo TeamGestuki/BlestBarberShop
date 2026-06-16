@@ -1,0 +1,547 @@
+<?php
+require_once '../config/database.php';
+
+$sedeId = 2;
+$barberos = [];
+$galeriasBarberos = [];
+
+try {
+    $sqlBarberos = "SELECT *
+                    FROM barberos
+                    WHERE sede_id = :sede_id
+                    AND activo = 1
+                    ORDER BY nombre ASC";
+
+    $stmtBarberos = $conn->prepare($sqlBarberos);
+    $stmtBarberos->bindParam(":sede_id", $sedeId);
+    $stmtBarberos->execute();
+
+    $barberos = $stmtBarberos->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($barberos as $index => $barbero) {
+        $sqlFotos = "SELECT *
+                     FROM barbero_fotos
+                     WHERE barbero_id = :barbero_id
+                     AND activo = 1
+                     ORDER BY id ASC";
+
+        $stmtFotos = $conn->prepare($sqlFotos);
+        $stmtFotos->bindParam(":barbero_id", $barbero["id"]);
+        $stmtFotos->execute();
+
+        $fotos = $stmtFotos->fetchAll(PDO::FETCH_ASSOC);
+
+        $barberos[$index]["fotos"] = $fotos;
+
+        $galeriaNombre = "barbero_" . $barbero["id"];
+        $galeriasBarberos[$galeriaNombre] = [];
+
+        foreach ($fotos as $foto) {
+            $galeriasBarberos[$galeriaNombre][] = "../" . $foto["foto"];
+        }
+    }
+
+} catch (PDOException $e) {
+    $barberos = [];
+    $galeriasBarberos = [];
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sede Villa Luro | Blest Barber Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- ======================== NAVBAR ======================== -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolled" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.php">
+        <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="index.php">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.php#servicios">Servicios</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"
+               style="color:var(--gold)!important">
+              Sedes
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="SedeNaon.php"
+                  <i class="bi bi-geo-alt-fill"></i>
+                  Sede Naón
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="SedeVLuro.php"
+                   style="color:var(--gold)!important">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  Sede Villa Luro
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="contacto.php">Contacto</a></li>
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-outline-gold btn-sm" href="login.php">Ingresar</a>
+          </li>
+          <li class="nav-item ms-lg-1">
+            <a class="btn btn-gold btn-sm" href="registro.php">Reservar turno</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======================== HEADER SEDE ======================== -->
+  <div class="sede-header">
+    <div class="container">
+      <div class="sede-tag"><i class="bi bi-geo-alt-fill"></i> Sede 02</div>
+      <p class="section-eyebrow mb-2">Barrio Villa Luro, CABA</p>
+      <h1 class="section-title mb-0">Sede <span class="text-gold">Villa Luro</span></h1>
+      <div class="sede-info-strip">
+        <span class="sede-info-item"><i class="bi bi-geo-alt-fill"></i> Avenida Rivadavia 10545 Villa Luro, CABA.</span>
+        <span class="sede-info-item"><i class="bi bi-clock-fill"></i> Mar–Sáb 10:30–13:00 / 14:30–20:00</span>
+        <span class="sede-info-item"><i class="bi bi-telephone-fill"></i> +54 9 11 5126-7271</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== BARBEROS ======================== -->
+<section class="barbers-section py-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="section-eyebrow">El equipo Villa Luro</p>
+      <h2 class="section-title">Nuestros <span class="text-gold">Barberos</span></h2>
+      <p style="color:var(--muted);font-size:14px;max-width:500px;margin:0 auto">
+        Cada barbero tiene su estilo. Elegí el tuyo y reservá tu turno directo con él.
+      </p>
+    </div>
+
+    <div class="row g-5 justify-content-center">
+
+      <?php foreach ($barberos as $barbero): ?>
+
+        <?php
+          $fotos = $barbero["fotos"] ?? [];
+          $totalFotos = count($fotos);
+          $galeriaNombre = "barbero_" . $barbero["id"];
+        ?>
+
+        <div class="col-lg-6">
+          <div class="barber-card">
+            <div class="row g-0">
+              <div class="col-5">
+                <div class="barber-img-wrap" style="height:100%">
+                  <img src="../<?php echo htmlspecialchars($barbero["foto"]); ?>"
+                       alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>"
+                       class="barber-img"
+                       style="height:100%;min-height:260px">
+
+                  <div class="barber-overlay">
+                    <a href="registro.php" class="btn btn-gold btn-sm">Reservar</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-7 ps-4 py-3 d-flex flex-column">
+                <div class="barber-info mb-3">
+                  <h4 class="barber-name">
+                    <?php echo htmlspecialchars($barbero["nombre"]); ?>
+                  </h4>
+
+                  <span class="barber-spec">
+                    <?php echo htmlspecialchars($barbero["especialidad"]); ?>
+                  </span>
+                </div>
+
+                <p style="font-size:12px;color:var(--muted);line-height:1.6;flex:1">
+                  Especialista en cortes modernos, detalles personalizados y atención profesional.
+                </p>
+
+                <?php if (!empty($fotos)): ?>
+
+                  <div class="barber-cuts-grid mt-2">
+
+                    <?php foreach (array_slice($fotos, 0, 3) as $index => $foto): ?>
+
+                      <?php $esVerMas = ($index === 2 && $totalFotos > 3); ?>
+
+                      <div class="barber-cut-thumb <?php echo $esVerMas ? 'barber-cut-more' : ''; ?>"
+                           data-gallery="<?php echo $galeriaNombre; ?>"
+                           data-index="<?php echo $index; ?>">
+
+                        <img src="../<?php echo htmlspecialchars($foto["foto"]); ?>"
+                             alt="Trabajo <?php echo $index + 1; ?>">
+
+                        <?php if ($esVerMas): ?>
+
+                          <div class="barber-cut-more-overlay">
+                            <i class="bi bi-images"></i>
+                            <span>Ver más</span>
+                          </div>
+
+                        <?php else: ?>
+
+                          <div class="barber-cut-overlay">
+                            <i class="bi bi-zoom-in"></i>
+                          </div>
+
+                        <?php endif; ?>
+
+                      </div>
+
+                    <?php endforeach; ?>
+
+                  </div>
+
+                <?php endif; ?>
+
+                <a href="registro.php"
+                   class="btn btn-outline-gold btn-sm mt-3"
+                   style="align-self:flex-start">
+                  Reservar turno <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <?php endforeach; ?>
+
+    </div>
+  </div>
+</section>
+
+  <!-- ======================== GALERÍA SEDE ======================== -->
+  <section class="gallery-section py-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <p class="section-eyebrow">Trabajos de la sede</p>
+        <h2 class="section-title">Galería <span class="text-gold">Villa Luro</span></h2>
+      </div>
+      <div class="gallery-grid">
+
+        <div class="gallery-item"
+            data-gallery="villaluro"
+            data-index="0">
+
+          <img src="../img/corteluro.webp"
+              alt="Trabajo 1">
+
+          <div class="gallery-hover">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+
+        <div class="gallery-item"
+            data-gallery="villaluro"
+            data-index="1">
+
+          <img src="../img/corteluro2.webp"
+              alt="Trabajo 2">
+
+          <div class="gallery-hover">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+
+        <div class="gallery-item"
+            data-gallery="villaluro"
+            data-index="2">
+
+          <img src="../img/corteluro3.webp"
+              alt="Trabajo 3">
+
+          <div class="gallery-hover">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+
+        <div class="gallery-item"
+            data-gallery="villaluro"
+            data-index="3">
+
+          <img src="../img/corteluro4.webp"
+              alt="Trabajo 4">
+
+          <div class="gallery-hover">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+
+        <div class="gallery-item"
+            data-gallery="villaluro"
+            data-index="4">
+
+          <img src="../img/corteluro5.webp"
+              alt="Trabajo 5">
+
+          <div class="gallery-hover">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+
+        <div class="gallery-item gallery-more"
+            data-gallery="villaluro"
+            data-index="5">
+
+          <img src="../img/corteluro6.webp"
+              alt="Ver más">
+
+          <div class="gallery-more-overlay">
+            <i class="bi bi-images gallery-more-icon"></i>
+
+            <span class="gallery-more-text">
+              Ver más
+            </span>
+
+            <small class="gallery-more-subtext">
+              Explorar galería
+            </small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== MAPA ======================== -->
+  <section style="background:var(--bg2);padding:60px 0">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5">
+          <p class="section-eyebrow">Cómo llegar</p>
+          <h2 class="section-title">Sede <span class="text-gold">Villa Luro</span></h2>
+          <ul class="footer-contact-list mt-3">
+            <li><i class="bi bi-geo-alt-fill"></i> Avenida Rivadavia 10545 Villa Luro, CABA.</li>
+            <li><i class="bi bi-clock-fill"></i> Mar–Sáb 10:30–13:00 / 14:30–20:00</li>
+            <li><i class="bi bi-telephone-fill"></i> +54 9 11 5126-7271</li>
+          </ul>
+          <a href="registro.php" class="btn btn-gold mt-4">Reservar en esta sede</a>
+        </div>
+        <div class="col-lg-7">
+          <div style="border:1px solid var(--border);overflow:hidden">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.6168965619963!2d-58.5121886!3d-34.639120399999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcc9001710313d%3A0xb8d8254ed3109833!2sBlest%20Barber%20Shop%20Villa%20Luro!5e0!3m2!1ses-419!2sar!4v1781312327504!5m2!1ses-419!2sar"
+              width="100%" height="320" style="border:0;display:block;filter:grayscale(70%) contrast(1.1) brightness(0.6)"
+              allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              title="Ubicación Sede Villa Luro">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="footer-brand">
+            <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
+          </div>
+          <p class="footer-tagline">El arte del filo, la precisión del corte.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/blestbarbershop/" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.tiktok.com/@blestbarbershop00" target="_blank" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+            <a href="https://api.whatsapp.com/send/?phone=5491151267271" target="_blank" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-2 offset-lg-1">
+          <h5 class="footer-heading">Sitio</h5>
+          <ul class="footer-links">
+            <li><a href="index.php">Inicio</a></li>
+            <li><a href="index.php#servicios">Servicios</a></li>
+            <li><a href="SedeNaon.php">Sede Naón</a></li>
+            <li><a href="SedeVLuro.php">Sede Villa Luro</a></li>
+            <li><a href="contacto.php">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+          <h5 class="footer-heading">Mi cuenta</h5>
+          <ul class="footer-links">
+            <li><a href="registro.php">Registrarse</a></li>
+            <li><a href="login.php">Ingresar</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3">
+          <h5 class="footer-heading">Horarios</h5>
+          <ul class="footer-contact-list">
+            <li><i class="bi bi-clock-fill"></i> Mar–Sab 10:30–13 / 14:30–20 hs</li>
+            <li><i class="bi bi-x-circle-fill" style="color:#8b1a1a"></i> Dom-Lun cerrado</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Blest Barber Shop · Todos los derechos reservados</p>
+      </div>
+    </div>
+  </footer>
+
+<!-- MODAL GALERÍA / CARRUSEL -->
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content gallery-modal-content">
+
+      <button type="button"
+              class="btn-close btn-close-white gallery-modal-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"></button>
+
+      <div class="modal-body p-0">
+
+        <div id="imageGalleryCarousel" class="carousel slide">
+          <div class="carousel-inner" id="galleryCarouselInner"></div>
+
+          <button class="carousel-control-prev"
+                  type="button"
+                  data-bs-target="#imageGalleryCarousel"
+                  data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+
+          <button class="carousel-control-next"
+                  type="button"
+                  data-bs-target="#imageGalleryCarousel"
+                  data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+          </button>
+        </div>
+
+        <div class="gallery-counter"
+             id="galleryCounter">
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  const galleries = {
+  villaluro: [
+    "../img/corteluro.webp",
+    "../img/corteluro2.webp",
+    "../img/corteluro3.webp",
+    "../img/corteluro4.webp",
+    "../img/corteluro5.webp",
+    "../img/corteluro6.webp"
+  ],
+
+  <?php foreach ($galeriasBarberos as $nombreGaleria => $imagenes): ?>
+    "<?php echo $nombreGaleria; ?>": <?php echo json_encode($imagenes); ?>,
+  <?php endforeach; ?>
+};
+
+  const modalElement =
+    document.getElementById("imageGalleryModal");
+
+  const carouselElement =
+    document.getElementById("imageGalleryCarousel");
+
+  const carouselInner =
+    document.getElementById("galleryCarouselInner");
+
+  const galleryCounter =
+    document.getElementById("galleryCounter");
+
+  let activeGallery = [];
+
+  function openGallery(galleryName, startIndex) {
+
+    activeGallery = galleries[galleryName];
+
+    carouselInner.innerHTML = "";
+
+    activeGallery.forEach((imageSrc, index) => {
+
+      const item = document.createElement("div");
+
+      item.classList.add("carousel-item");
+
+      if (index === startIndex) {
+        item.classList.add("active");
+      }
+
+      item.innerHTML = `
+        <img src="${imageSrc}"
+            class="d-block w-100 gallery-modal-img"
+            alt="Foto ${index + 1}">
+      `;
+
+      carouselInner.appendChild(item);
+    });
+
+    updateCounter(startIndex);
+
+    const modal =
+      new bootstrap.Modal(modalElement);
+
+    modal.show();
+
+    const carousel =
+      bootstrap.Carousel.getOrCreateInstance(
+        carouselElement,
+        {
+          interval: false,
+          ride: false
+        }
+      );
+
+    carousel.to(startIndex);
+  }
+
+  function updateCounter(index) {
+    galleryCounter.textContent =
+      `${index + 1} / ${activeGallery.length}`;
+  }
+
+  document
+  .querySelectorAll("[data-gallery]")
+  .forEach(item => {
+
+    item.addEventListener("click", () => {
+
+      const galleryName =
+        item.dataset.gallery;
+
+      const startIndex =
+        Number(item.dataset.index);
+
+      openGallery(
+        galleryName,
+        startIndex
+      );
+    });
+  });
+
+  carouselElement.addEventListener(
+    "slid.bs.carousel",
+    event => {
+      updateCounter(event.to);
+    }
+  );
+  </script>
+
+  <script src="../js/main.js"></script>
+
+</body>
+</html>

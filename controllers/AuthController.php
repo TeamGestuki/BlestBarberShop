@@ -15,7 +15,7 @@ if ($action === "register") {
 } elseif ($action === "login") {
     login($conn);
 } elseif ($action === "logout") {
-    logout();
+    logout($conn);
 } else {
     header("Location: ../html/login.php?error=accion_invalida");
     exit;
@@ -42,8 +42,8 @@ function register($conn) {
     }
 
     if (!$terminos) {
-    header("Location: ../html/registro.php?error=terminos_no_aceptados");
-    exit;
+        header("Location: ../html/registro.php?error=terminos_no_aceptados");
+        exit;
     }
     
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -95,6 +95,7 @@ function register($conn) {
 function login($conn) {
     $email = trim($_POST["email"] ?? "");
     $password = $_POST["password"] ?? "";
+    $recordar = isset($_POST["recordar"]);
 
     if (empty($email) || empty($password)) {
         header("Location: ../html/login.php?error=campos_vacios");
@@ -118,17 +119,88 @@ function login($conn) {
     $_SESSION["usuario_email"] = $usuario["email"];
     $_SESSION["usuario_rol"] = $usuario["rol"];
 
+    $sqlUltimoAcceso = "UPDATE usuarios
+                        SET ultimo_acceso = NOW()
+                        WHERE id = :id";
+
+    $stmtUltimoAcceso = $conn->prepare($sqlUltimoAcceso);
+    $stmtUltimoAcceso->bindParam(":id", $usuario["id"]);
+    $stmtUltimoAcceso->execute();
+
+    if ($recordar) {
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash("sha256", $token);
+
+        $sqlToken = "UPDATE usuarios
+                     SET remember_token_hash = :token_hash,
+                         remember_token_expira = DATE_ADD(NOW(), INTERVAL 1 MONTH)
+                     WHERE id = :id";
+
+        $stmtToken = $conn->prepare($sqlToken);
+        $stmtToken->bindParam(":token_hash", $tokenHash);
+        $stmtToken->bindParam(":id", $usuario["id"]);
+        $stmtToken->execute();
+
+        setcookie(
+            "remember_token",
+            $token,
+            time() + (30 * 24 * 60 * 60),
+            "/",
+            "",
+            false,
+            true
+        );
+
+        setcookie(
+            "remember_user",
+            $usuario["id"],
+            time() + (30 * 24 * 60 * 60),
+            "/",
+            "",
+            false,
+            true
+        );
+
+    } else {
+        $sqlLimpiarToken = "UPDATE usuarios
+                            SET remember_token_hash = NULL,
+                                remember_token_expira = NULL
+                            WHERE id = :id";
+
+        $stmtLimpiarToken = $conn->prepare($sqlLimpiarToken);
+        $stmtLimpiarToken->bindParam(":id", $usuario["id"]);
+        $stmtLimpiarToken->execute();
+
+        setcookie("remember_token", "", time() - 3600, "/");
+        setcookie("remember_user", "", time() - 3600, "/");
+    }
+
     if ($usuario["rol"] === "admin") {
-        header("Location: ../html/panel_admin.php");
+        header("Location: ../html/admin/panel_admin.php");
         exit;
     }
 
-    header("Location: ../html/panel_usuario.php");
+    header("Location: ../html/user/panel_usuario.php");
     exit;
 }
 
-function logout() {
-    session_start();
+function logout($conn) {
+    $usuarioId = $_SESSION["usuario_id"] ?? null;
+
+    if ($usuarioId) {
+        $sql = "UPDATE usuarios
+                SET remember_token_hash = NULL,
+                    remember_token_expira = NULL
+                WHERE id = :id";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":id", $usuarioId);
+        $stmt->execute();
+    }
+
+    setcookie("remember_token", "", time() - 3600, "/");
+    setcookie("remember_user", "", time() - 3600, "/");
+
     session_unset();
     session_destroy();
 

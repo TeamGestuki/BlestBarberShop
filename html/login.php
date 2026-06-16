@@ -14,10 +14,10 @@
   <!-- Navbar mínima -->
   <nav class="navbar navbar-dark fixed-top py-3" style="background:rgba(10,10,10,0.95);border-bottom:1px solid var(--border)">
     <div class="container">
-      <a class="navbar-brand" href="index.html">
+      <a class="navbar-brand" href="index.php">
         <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
       </a>
-      <a href="index.html" class="btn btn-outline-gold btn-sm">← Volver al inicio</a>
+      <a href="index.php" class="btn btn-outline-gold btn-sm">← Volver al inicio</a>
     </div>
   </nav>
 

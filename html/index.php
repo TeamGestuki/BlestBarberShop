@@ -1,3 +1,22 @@
+<?php
+require_once '../config/database.php';
+
+try {
+    $sql = "SELECT *
+            FROM servicios
+            WHERE activo = 1
+            ORDER BY id ASC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $servicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    $servicios = [];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,32 +33,35 @@
   <!-- ======================== NAVBAR ======================== -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="index.html">
+      <a class="navbar-brand" href="index.php">
         <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
       </a>
+
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarMenu">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
           <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
 
-          <!-- DROPDOWN SEDES — usa data-bs-toggle="dropdown", sin hover CSS -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button"
                data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
               Sedes
             </a>
+
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" href="SedeNaon.html">
+                <a class="dropdown-item" href="SedeNaon.php">
                   <i class="bi bi-geo-alt-fill"></i>
                   Sede Naón
                 </a>
               </li>
+
               <li>
-                <a class="dropdown-item" href="SedeVLuro.html">
+                <a class="dropdown-item" href="SedeVLuro.php">
                   <i class="bi bi-geo-alt-fill"></i>
                   Sede Villa Luro
                 </a>
@@ -48,9 +70,11 @@
           </li>
 
           <li class="nav-item"><a class="nav-link" href="contacto.php">Contacto</a></li>
+
           <li class="nav-item ms-lg-2">
             <a class="btn btn-outline-gold btn-sm" href="login.php">Ingresar</a>
           </li>
+
           <li class="nav-item ms-lg-1">
             <a class="btn btn-gold btn-sm" href="registro.php">Reservar turno</a>
           </li>
@@ -62,33 +86,43 @@
   <!-- ======================== HERO ======================== -->
   <section class="hero-section" id="inicio">
     <div class="hero-slash"></div>
+
     <div class="container h-100 position-relative">
       <div class="row h-100 align-items-center">
+
         <div class="col-lg-7">
           <p class="hero-eyebrow">Buenos Aires · Desde 2020</p>
+
           <h1 class="hero-title">
             EL ARTE<br>
             <span class="title-gold">DEL BLEST.</span>
           </h1>
+
           <p class="hero-subtitle">
             Un espacio donde las risas, la buena música y los cortes impecables se encuentran.
           </p>
+
           <div class="d-flex gap-3 flex-wrap mt-4">
             <a href="registro.php" class="btn btn-gold btn-lg">Reservar turno</a>
             <a href="#servicios" class="btn btn-outline-gold btn-lg">Ver servicios</a>
           </div>
         </div>
+
         <div class="col-lg-5 d-none d-lg-flex justify-content-end">
           <div class="hero-img-frame">
             <div class="hero-img-inner">
-              <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=500&q=80" alt="Barbero trabajando" class="hero-photo">
+              <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=500&q=80"
+                   alt="Barbero trabajando"
+                   class="hero-photo">
             </div>
+
             <div class="hero-img-badge">
               <i class="bi bi-scissors"></i>
               <span>Premium<br>Barbershop</span>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -102,6 +136,7 @@
         <span>CORTE · BARBA · AFEITADO · CEJAS · KERATINA · TINTURA · </span>
         <span>CORTE · BARBA · AFEITADO · CEJAS · KERATINA · TINTURA · </span>
       </div>
+
       <div class="announcement-content">
         <span>CORTE · BARBA · AFEITADO · CEJAS · KERATINA · TINTURA · </span>
         <span>CORTE · BARBA · AFEITADO · CEJAS · KERATINA · TINTURA · </span>
@@ -115,41 +150,63 @@
   <section class="about-section py-section" id="nosotros">
     <div class="container">
       <div class="row align-items-center g-5">
+
         <div class="col-lg-5">
           <div class="about-img-grid">
-            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80" alt="Interior barbería" class="about-img-main">
-            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&q=80" alt="Herramientas" class="about-img-side">
+            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80"
+                 alt="Interior barbería"
+                 class="about-img-main">
+
+            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&q=80"
+                 alt="Herramientas"
+                 class="about-img-side">
+
             <div class="about-img-tag">
               <i class="bi bi-award-fill"></i>
               <span>Calidad garantizada</span>
             </div>
           </div>
         </div>
+
         <div class="col-lg-6 offset-lg-1">
           <p class="section-eyebrow">Quiénes somos</p>
-          <h2 class="section-title">Más que una barbería.<br><span class="text-gold">Un ritual.</span></h2>
+
+          <h2 class="section-title">
+            Más que una barbería.<br>
+            <span class="text-gold">Un ritual.</span>
+          </h2>
+
           <p class="section-body">
-            En <strong>Blest Barber Shop</strong> entendemos que un buen corte no es solo estética: es confianza, es carácter. Desde el 2020 trabajamos con dedicación artesanal, combinando técnica clásica con tendencias actuales.
+            En <strong>Blest Barber Shop</strong> entendemos que un buen corte no es solo estética:
+            es confianza, es carácter. Desde el 2020 trabajamos con dedicación artesanal,
+            combinando técnica clásica con tendencias actuales.
           </p>
+
           <p class="section-body">
-            Cada silla en nuestro local es un espacio de respeto por el oficio. Venís, te sentás, y salís siendo vos — pero mejor.
+            Cada silla en nuestro local es un espacio de respeto por el oficio.
+            Venís, te sentás, y salís siendo vos — pero mejor.
           </p>
+
           <div class="about-features mt-4">
             <div class="about-feature-item">
               <i class="bi bi-check2-circle text-gold fs-5"></i>
               <span>Productos de primera línea</span>
             </div>
+
             <div class="about-feature-item">
               <i class="bi bi-check2-circle text-gold fs-5"></i>
               <span>Turnos con horario garantizado</span>
             </div>
+
             <div class="about-feature-item">
               <i class="bi bi-check2-circle text-gold fs-5"></i>
               <span>Ambiente cómodo y auténtico</span>
             </div>
           </div>
+
           <a href="#servicios" class="btn btn-gold mt-4">Ver nuestros servicios</a>
         </div>
+
       </div>
     </div>
   </section>
@@ -161,80 +218,57 @@
         <p class="section-eyebrow">Lo que hacemos</p>
         <h2 class="section-title">Servicios</h2>
       </div>
+
       <div class="row g-4 justify-content-center">
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card h-100">
-            <div class="service-icon"><i class="bi bi-scissors"></i></div>
-            <h3 class="service-title">Corte Completo</h3>
-            <p class="service-desc">Asesoramiento, corte con máquina/tijera y peinado con cera.</p>
-            <div class="service-footer">
-              <span class="service-price">$17.000</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-        </div>
+        <?php if (empty($servicios)): ?>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card service-card--featured h-100">
-            <div class="service-badge">Popular</div>
-            <div class="service-icon"><i class="bi bi-star-fill"></i></div>
-            <h3 class="service-title">Corte + Barba</h3>
-            <p class="service-desc">Corte completo + alineación, rebaje y perfilado de barba.</p>
-            <div class="service-footer">
-              <span class="service-price">$22.000</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a>
+          <div class="col-lg-8">
+            <div class="admin-empty-state">
+              <i class="bi bi-scissors"></i>
+              <p>Próximamente vamos a publicar nuestros servicios disponibles.</p>
             </div>
           </div>
-        </div>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card h-100">
-            <div class="service-icon"><i class="bi bi-moisture"></i></div>
-            <h3 class="service-title">Solo Barba</h3>
-            <p class="service-desc">Alineación, rebaje y perfilado.</p>
-            <div class="service-footer">
-              <span class="service-price">$12.000</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-        </div>
+        <?php else: ?>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card h-100">
-            <div class="service-icon"><i class="bi bi-droplet-fill"></i></div>
-            <h3 class="service-title">Global</h3>
-            <p class="service-desc">Decoloración global y matizado (incluye corte).</p>
-            <div class="service-footer">
-              <span class="service-price">$55.000</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-        </div>
+          <?php foreach ($servicios as $servicio): ?>
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card h-100">
-            <div class="service-icon"><i class="bi bi-droplet-fill"></i></div>
-            <h3 class="service-title">Mechas</h3>
-            <p class="service-desc">Decoloración con gorro para mechas y matizado (incluye corte).</p>
-            <div class="service-footer">
-              <span class="service-price">$50.000</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a>
-            </div>
-          </div>
-        </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="service-card h-100">
 
-        <div class="col-md-6 col-lg-4">
-          <div class="service-card h-100">
-            <div class="service-icon"><i class="bi bi-magic"></i></div>
-            <h3 class="service-title">Diseño & Freestyle</h3>
-            <p class="service-desc">Perfilado de cejas, diseño y freestyle. Incluido en cualquier servicio.</p>
-            <div class="service-footer">
-              <span class="service-price">GRATIS</span>
-              <a href="registro.php" class="btn-service-link">Reservar <i class="bi bi-arrow-right"></i></a> 
+                <div class="service-icon">
+                  <i class="bi bi-scissors"></i>
+                </div>
+
+                <h3 class="service-title">
+                  <?php echo htmlspecialchars($servicio["nombre"]); ?>
+                </h3>
+
+                <p class="service-desc">
+                  <?php echo htmlspecialchars($servicio["descripcion"]); ?>
+                </p>
+
+                <div class="service-footer">
+                  <span class="service-price">
+                    <?php if ((float)$servicio["precio"] == 0): ?>
+                      GRATIS
+                    <?php else: ?>
+                      $<?php echo number_format($servicio["precio"], 0, ",", "."); ?>
+                    <?php endif; ?>
+                  </span>
+
+                  <a href="registro.php" class="btn-service-link">
+                    Reservar <i class="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+
+              </div>
             </div>
-          </div>
-        </div>
+
+          <?php endforeach; ?>
+
+        <?php endif; ?>
 
       </div>
     </div>
@@ -243,15 +277,24 @@
   <!-- ======================== CTA SEDES ======================== -->
   <section class="cta-section">
     <div class="cta-bg"></div>
+
     <div class="container position-relative">
       <div class="row justify-content-center text-center">
         <div class="col-lg-7">
           <p class="section-eyebrow">Dos ubicaciones</p>
-          <h2 class="cta-title">Encontranos cerca<br><span class="text-gold">de vos.</span></h2>
-          <p class="cta-body">Tenemos dos sedes en CABA. Elegí la que te quede más cómoda y reservá tu turno online.</p>
+
+          <h2 class="cta-title">
+            Encontranos cerca<br>
+            <span class="text-gold">de vos.</span>
+          </h2>
+
+          <p class="cta-body">
+            Tenemos dos sedes en CABA. Elegí la que te quede más cómoda y reservá tu turno online.
+          </p>
+
           <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
-            <a href="SedeNaon.html" class="btn btn-gold btn-lg">Sede Naón</a>
-            <a href="SedeVLuro.html" class="btn btn-outline-gold btn-lg">Sede Villa Luro</a>
+            <a href="SedeNaon.php" class="btn btn-gold btn-lg">Sede Naón</a>
+            <a href="SedeVLuro.php" class="btn btn-outline-gold btn-lg">Sede Villa Luro</a>
           </div>
         </div>
       </div>
@@ -262,38 +305,55 @@
   <footer class="site-footer">
     <div class="container">
       <div class="row g-4">
+
         <div class="col-lg-4">
           <div class="footer-brand">
             <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
           </div>
+
           <p class="footer-tagline">El arte del filo, la precisión del corte.</p>
+
           <div class="footer-social">
-            <a href="https://www.instagram.com/blestbarbershop/" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="https://www.tiktok.com/@blestbarbershop00" target="_blank" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-            <a href="https://api.whatsapp.com/send/?phone=5491151267271" target="_blank" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://www.instagram.com/blestbarbershop/" target="_blank" aria-label="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+
+            <a href="https://www.tiktok.com/@blestbarbershop00" target="_blank" aria-label="TikTok">
+              <i class="bi bi-tiktok"></i>
+            </a>
+
+            <a href="https://api.whatsapp.com/send/?phone=5491151267271" target="_blank" aria-label="WhatsApp">
+              <i class="bi bi-whatsapp"></i>
+            </a>
           </div>
         </div>
+
         <div class="col-sm-6 col-lg-2 offset-lg-1">
           <h5 class="footer-heading">Sitio</h5>
+
           <ul class="footer-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="#servicios">Servicios</a></li>
-            <li><a href="SedeNaon.html">Sede Naón</a></li>
-            <li><a href="SedeVLuro.html">Sede Villa Luro</a></li>
+            <li><a href="index.php">Inicio</a></li>
+            <li><a href="index.php#servicios">Servicios</a></li>
+            <li><a href="SedeNaon.php">Sede Naón</a></li>
+            <li><a href="SedeVLuro.php">Sede Villa Luro</a></li>
             <li><a href="contacto.php">Contacto</a></li>
           </ul>
         </div>
+
         <div class="col-sm-6 col-lg-2">
           <h5 class="footer-heading">Mi cuenta</h5>
+
           <ul class="footer-links">
             <li><a href="registro.php">Registrarse</a></li>
             <li><a href="login.php">Ingresar</a></li>
-            <li><a href="cliente/turnos.php">Mis turnos</a></li>
-            <li><a href="cliente/perfil.php">Mi perfil</a></li>
+            <li><a href="user/panel_usuario.php">Mi panel</a></li>
+            <li><a href="terminos.html">Términos y condiciones</a></li>
           </ul>
         </div>
+
         <div class="col-lg-3">
           <h5 class="footer-heading">Contacto</h5>
+
           <ul class="footer-contact-list">
             <li><i class="bi bi-geo-alt-fill"></i> Montiel 1551, Barrio Naón</li>
             <li><i class="bi bi-geo-alt-fill"></i> Av. Rivadavia 10545, Villa Luro</li>
@@ -302,7 +362,9 @@
             <li><i class="bi bi-envelope-fill"></i> Juancruzargentina05@gmail.com</li>
           </ul>
         </div>
+
       </div>
+
       <div class="footer-bottom">
         <p>© 2026 Blest Barber Shop · Todos los derechos reservados</p>
       </div>
