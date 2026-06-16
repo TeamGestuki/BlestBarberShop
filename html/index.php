@@ -112,7 +112,7 @@ try {
         <div class="col-lg-5 d-none d-lg-flex justify-content-end">
           <div class="hero-img-frame">
             <div class="hero-img-inner">
-              <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=500&q=80"
+              <img src="../img/barber.webp"
                    alt="Barbero trabajando"
                    class="hero-photo">
             </div>
