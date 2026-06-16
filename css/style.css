@@ -627,41 +627,43 @@ img { max-width: 100%; }
 .barber-cut-thumb:hover .barber-cut-overlay { opacity: 1; }
 
 /* ---- GALERÍA GENERAL ---- */
-.gallery-section { background-color: var(--bg2); }
+.gallery-section { 
+  background-color: var(--bg2); 
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 14px;
+  max-width: 1180px;
+  margin: 0 auto;
 }
-.gallery-item {
+
+.gallery-item,
+.gallery-item--tall,
+.gallery-item--wide {
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  height: 260px;
+  grid-column: auto;
+  grid-row: auto;
 }
-.gallery-item img {
+
+.gallery-item img,
+.gallery-item--tall img,
+.gallery-item--wide img {
   width: 100%;
-  height: 240px;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
   transition: transform 0.6s ease;
 }
-.gallery-item--tall img { height: 490px; }
-.gallery-item--wide { grid-column: span 2; }
-.gallery-item--wide img { height: 240px; }
-.gallery-item:hover img { transform: scale(1.06); }
-.gallery-hover {
-  position: absolute;
-  inset: 0;
-  background: rgba(201,168,76,0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity var(--transition);
-  font-size: 28px;
-  color: var(--gold);
+
+.gallery-item:hover img {
+  transform: scale(1.06);
 }
-.gallery-item:hover .gallery-hover { opacity: 1; }
 
 /* ---- SEDE PAGE HEADER ---- */
 .sede-header {
@@ -826,16 +828,37 @@ img { max-width: 100%; }
 @media (max-width: 991px) {
   .hero-title { font-size: 72px; }
   .about-img-side { display: none; }
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-  .gallery-item--tall { grid-row: span 1; }
-  .gallery-item--tall img { height: 260px; }
-  .gallery-item--wide { grid-column: span 1; }
-  .barber-cuts-grid { grid-template-columns: repeat(3, 1fr); }
+
+  .gallery-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+
+  .gallery-item,
+  .gallery-item--tall,
+  .gallery-item--wide {
+    height: 240px;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .barber-cuts-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+  }
 }
 @media (max-width: 575px) {
   .py-section { padding: 64px 0; }
   .hero-title { font-size: 56px; }
-  .gallery-grid { grid-template-columns: 1fr 1fr; }
+
+  .gallery-grid { 
+    grid-template-columns: 1fr; 
+  }
+
+  .gallery-item,
+  .gallery-item--tall,
+  .gallery-item--wide {
+    height: 240px;
+  }
+
   .footer-bottom { flex-direction: column; text-align: center; }
   .auth-card { padding: 32px 20px; }
   .sede-info-strip { gap: 14px; }
@@ -881,4 +904,82 @@ img { max-width: 100%; }
   color: #ff6b6b !important;
   font-size: 12px;
   margin-top: 6px;
+}
+
+/* ---- CARD VER MÁS GALERÍA ---- */
+.gallery-more {
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-more img {
+  filter: blur(2px) brightness(0.35);
+  transform: scale(1.08);
+}
+
+.gallery-more-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.35);
+  transition: 0.3s ease;
+}
+
+.gallery-more:hover .gallery-more-overlay {
+  background: rgba(0,0,0,0.18);
+}
+
+.gallery-more-icon {
+  color: var(--gold);
+  font-size: 34px;
+}
+
+.gallery-more-text {
+  font-family: var(--font-display);
+  font-size: 34px;
+  letter-spacing: 1px;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.gallery-more-subtext {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- MODAL CARRUSEL GALERÍA ---- */
+.gallery-modal-content {
+  background: #050505;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  position: relative;
+}
+
+.gallery-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+}
+
+.gallery-modal-img {
+  width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+  background: #050505;
+}
+
+.gallery-counter {
+  text-align: center;
+  padding: 12px 0 16px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  background: #050505;
 }
