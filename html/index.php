@@ -393,57 +393,58 @@ try {
   </section>
 
   <!-- ======================== FOOTER ======================== -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="row g-4">
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4">
 
-        <div class="col-lg-4">
-          <div class="footer-brand">
-            <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
-          </div>
-
-          <p class="footer-tagline">El arte del filo, la precisión del corte.</p>
-
-          <div class="footer-social">
-            <a href="https://www.instagram.com/blestbarbershop/" target="_blank" aria-label="Instagram">
-              <i class="bi bi-instagram"></i>
-            </a>
-
-            <a href="https://www.tiktok.com/@blestbarbershop00" target="_blank" aria-label="TikTok">
-              <i class="bi bi-tiktok"></i>
-            </a>
-
-            <a href="https://api.whatsapp.com/send/?phone=5491151267271" target="_blank" aria-label="WhatsApp">
-              <i class="bi bi-whatsapp"></i>
-            </a>
-          </div>
+      <div class="col-lg-4">
+        <div class="footer-brand">
+          <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
         </div>
 
-        <div class="col-sm-6 col-lg-2 offset-lg-1">
-          <h5 class="footer-heading">Sitio</h5>
+        <p class="footer-tagline">El arte del filo, la precisión del corte.</p>
 
-          <ul class="footer-links">
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="index.php#servicios">Servicios</a></li>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/blestbarbershop/" target="_blank" aria-label="Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
 
-            <?php foreach ($sedes as $sede): ?>
-              <li>
-                <a href="sede.php?id=<?php echo $sede["id"]; ?>">
-                  <?php echo htmlspecialchars($sede["nombre"]); ?>
-                </a>
-              </li>
-            <?php endforeach; ?>
+          <a href="https://www.tiktok.com/@blestbarbershop00" target="_blank" aria-label="TikTok">
+            <i class="bi bi-tiktok"></i>
+          </a>
 
-            <li><a href="contacto.php">Contacto</a></li>
-          </ul>
+          <a href="https://api.whatsapp.com/send/?phone=5491151267271" target="_blank" aria-label="WhatsApp">
+            <i class="bi bi-whatsapp"></i>
+          </a>
         </div>
+      </div>
 
-        <div class="col-sm-6 col-lg-2">
-          <h5 class="footer-heading">Mi cuenta</h5>
+      <div class="col-sm-6 col-lg-2 offset-lg-1">
+        <h5 class="footer-heading">Sitio</h5>
 
-          <ul class="footer-links">
-            <li><a href="registro.php">Registrarse</a></li>
-            <li><a href="login.php">Ingresar</a></li>
+        <ul class="footer-links">
+          <li><a href="index.php">Inicio</a></li>
+          <li><a href="index.php#servicios">Servicios</a></li>
+
+          <?php foreach ($sedes as $sede): ?>
+            <li>
+              <a href="sede.php?id=<?php echo $sede["id"]; ?>">
+                <?php echo htmlspecialchars($sede["nombre"]); ?>
+              </a>
+            </li>
+          <?php endforeach; ?>
+
+          <li><a href="contacto.php">Contacto</a></li>
+        </ul>
+      </div>
+
+      <div class="col-sm-6 col-lg-2">
+        <h5 class="footer-heading">Mi cuenta</h5>
+
+        <ul class="footer-links">
+
+          <?php if (isset($_SESSION["usuario_id"])): ?>
+
             <li>
               <a href="<?php echo $_SESSION["usuario_rol"] === "admin"
                   ? 'admin/panel_admin.php'
@@ -455,45 +456,56 @@ try {
 
               </a>
             </li>
+
+            <li><a href="user/reservar_turno.php">Reservar turno</a></li>
             <li><a href="terminos.html">Términos y condiciones</a></li>
-          </ul>
-        </div>
 
-        <div class="col-lg-3">
-          <h5 class="footer-heading">Contacto</h5>
+          <?php else: ?>
 
-          <ul class="footer-contact-list">
+            <li><a href="registro.php">Registrarse</a></li>
+            <li><a href="login.php">Ingresar</a></li>
+            <li><a href="terminos.html">Términos y condiciones</a></li>
 
-            <?php if (empty($sedes)): ?>
+          <?php endif; ?>
 
-              <li><i class="bi bi-geo-alt-fill"></i> Próximamente nuevas sedes</li>
-
-            <?php else: ?>
-
-              <?php foreach ($sedes as $sede): ?>
-                <li>
-                  <i class="bi bi-geo-alt-fill"></i>
-                  <?php echo htmlspecialchars($sede["direccion"]); ?>
-                </li>
-              <?php endforeach; ?>
-
-            <?php endif; ?>
-
-            <li><i class="bi bi-clock-fill"></i> Mar–Sáb 10:30–13:00 / 14:30–20:00</li>
-            <li><i class="bi bi-telephone-fill"></i> +54 9 11 5126-7271</li>
-            <li><i class="bi bi-envelope-fill"></i> Juancruzargentina05@gmail.com</li>
-          </ul>
-        </div>
-
+        </ul>
       </div>
 
-      <div class="footer-bottom">
-        <p>© 2026 Blest Barber Shop · Todos los derechos reservados</p>
+      <div class="col-lg-3">
+        <h5 class="footer-heading">Contacto</h5>
+
+        <ul class="footer-contact-list">
+
+          <?php if (empty($sedes)): ?>
+
+            <li><i class="bi bi-geo-alt-fill"></i> Próximamente nuevas sedes</li>
+
+          <?php else: ?>
+
+            <?php foreach ($sedes as $sede): ?>
+              <li>
+                <i class="bi bi-geo-alt-fill"></i>
+                <?php echo htmlspecialchars($sede["direccion"]); ?>
+              </li>
+            <?php endforeach; ?>
+
+          <?php endif; ?>
+
+          <li><i class="bi bi-clock-fill"></i> Mar–Sáb 10:30–13:00 / 14:30–20:00</li>
+          <li><i class="bi bi-telephone-fill"></i> +54 9 11 5126-7271</li>
+          <li><i class="bi bi-envelope-fill"></i> Juancruzargentina05@gmail.com</li>
+        </ul>
       </div>
+
     </div>
-  </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/main.js"></script>
+    <div class="footer-bottom">
+      <p>© 2026 Blest Barber Shop · Todos los derechos reservados</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/main.js"></script>
 </body>
 </html>
