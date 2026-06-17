@@ -180,9 +180,9 @@ function login($conn) {
         exit;
     }
 
-    header("Location: ../html/user/panel_usuario.php");
+    header("Location: ../html/index.php");
     exit;
-}
+    }
 
 function logout($conn) {
     $usuarioId = $_SESSION["usuario_id"] ?? null;

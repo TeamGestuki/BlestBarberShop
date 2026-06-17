@@ -53,6 +53,7 @@ try {
 
   <title>Servicios | Panel Admin</title>
 
+  <link rel="icon" type="image/jpg" href="../../img/logo.jpg?v=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
@@ -108,6 +109,11 @@ try {
            class="admin-menu-link">
           <i class="bi bi-person-badge"></i>
           Barberos
+        </a>
+
+        <a href="sedes.php" class="admin-menu-link">
+          <i class="bi bi-geo-alt"></i>
+          Sedes
         </a>
 
         <a href="usuarios.php"
@@ -240,6 +246,7 @@ try {
                 <th>Servicio</th>
                 <th>Descripción</th>
                 <th>Precio</th>
+                <th>Duración</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -261,6 +268,10 @@ try {
 
                 <td>
                   $<?php echo number_format($servicio["precio"], 0, ",", "."); ?>
+                </td>
+
+                <td>
+                  <?php echo htmlspecialchars($servicio["duracion_min"]); ?> min
                 </td>
 
                 <td>
@@ -365,7 +376,21 @@ try {
                             step="100"
                             required>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                        Duración (minutos)
+                        </label>
+
+                        <input type="number"
+                            name="duracion_min"
+                            class="form-control"
+                            value="<?php echo htmlspecialchars($servicio["duracion_min"]); ?>"
+                            min="15"
+                            step="15"
+                            required>
                     </div>
+              </div>
 
                     <div class="modal-footer d-flex justify-content-between">
                     <button
@@ -492,6 +517,7 @@ try {
               <th>Servicio</th>
               <th>Descripción</th>
               <th>Precio</th>
+              <th>Duración</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -503,6 +529,7 @@ try {
                 <td><?php echo htmlspecialchars($servicio["nombre"]); ?></td>
                 <td><?php echo htmlspecialchars($servicio["descripcion"]); ?></td>
                 <td>$<?php echo number_format($servicio["precio"], 0, ",", "."); ?></td>
+                <td><?php echo htmlspecialchars($servicio["duracion_min"]); ?> min</td>
                 <td>
                   <span class="admin-badge-inactive">Inactivo</span>
                 </td>
@@ -606,6 +633,20 @@ try {
                    min="0"
                    step="100"
                    required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">
+              Duración (minutos)
+            </label>
+
+            <input type="number"
+                  name="duracion_min"
+                  class="form-control"
+                  min="15"
+                  step="15"
+                  value="30"
+                  required>
           </div>
 
           <div class="form-check mt-3">

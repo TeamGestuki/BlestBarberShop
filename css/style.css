@@ -1782,3 +1782,48 @@ img { max-width: 100%; }
   background-color: var(--bg3);
   color: var(--cream);
 }
+
+/* ---- ADMIN SEDES ---- */
+
+.admin-barber-card .admin-barber-image img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ---- MAPA DINÁMICO SEDES ---- */
+
+.sede-map-wrap {
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  overflow: hidden;
+  height: 420px;
+  width: 100%;
+}
+
+.sede-map-wrap iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  display: block;
+  filter: grayscale(80%) contrast(1.1) brightness(0.72);
+}
+
+.sede-map-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.sede-map-empty i {
+  font-size: 56px;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.sede-map-empty p {
+  color: var(--muted);
+  margin: 0;
+}

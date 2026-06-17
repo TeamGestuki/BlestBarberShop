@@ -101,10 +101,6 @@ try {
     $totalAdmins = $stats["admins"] ?? 0;
     $totalSesionesActivas = $stats["sesiones_activas"] ?? 0;
 
-    if ($_SESSION["usuario_rol"] === "admin") {
-        $totalSesionesActivas++;
-    }
-
     $sql = "SELECT
                 id,
                 nombre,
@@ -163,6 +159,7 @@ try {
 
   <title>Usuarios | Panel Admin</title>
 
+  <link rel="icon" type="image/jpg" href="../../img/logo.jpg?v=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
@@ -218,6 +215,11 @@ try {
            class="admin-menu-link">
           <i class="bi bi-person-badge"></i>
           Barberos
+        </a>
+
+        <a href="sedes.php" class="admin-menu-link">
+          <i class="bi bi-geo-alt"></i>
+          Sedes
         </a>
 
         <a href="usuarios.php"

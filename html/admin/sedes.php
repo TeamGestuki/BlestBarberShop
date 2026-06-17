@@ -19,41 +19,47 @@ $success = $_GET["success"] ?? "";
 $error = $_GET["error"] ?? "";
 
 try {
-    $sqlSedes = "SELECT * FROM sedes ORDER BY nombre ASC";
-    $stmtSedes = $conn->prepare($sqlSedes);
-    $stmtSedes->execute();
-    $sedes = $stmtSedes->fetchAll(PDO::FETCH_ASSOC);
+    $sqlActivas = "SELECT *
+                   FROM sedes
+                   WHERE activo = 1
+                   ORDER BY nombre ASC";
 
-    $sqlActivos = "SELECT barberos.*, sedes.nombre AS sede_nombre
-                   FROM barberos
-                   INNER JOIN sedes ON barberos.sede_id = sedes.id
-                   WHERE barberos.activo = 1
-                   ORDER BY sedes.nombre ASC, barberos.nombre ASC";
+    $stmtActivas = $conn->prepare($sqlActivas);
+    $stmtActivas->execute();
+    $sedesActivas = $stmtActivas->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtActivos = $conn->prepare($sqlActivos);
-    $stmtActivos->execute();
-    $barberosActivos = $stmtActivos->fetchAll(PDO::FETCH_ASSOC);
+    $sqlInactivas = "SELECT *
+                     FROM sedes
+                     WHERE activo = 0
+                     ORDER BY nombre ASC";
 
-    $sqlInactivos = "SELECT barberos.*, sedes.nombre AS sede_nombre
-                     FROM barberos
-                     INNER JOIN sedes ON barberos.sede_id = sedes.id
-                     WHERE barberos.activo = 0
-                     ORDER BY sedes.nombre ASC, barberos.nombre ASC";
+    $stmtInactivas = $conn->prepare($sqlInactivas);
+    $stmtInactivas->execute();
+    $sedesInactivas = $stmtInactivas->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtInactivos = $conn->prepare($sqlInactivos);
-    $stmtInactivos->execute();
-    $barberosInactivos = $stmtInactivos->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($sedesActivas as $index => $sede) {
+        $sqlFotos = "SELECT *
+                     FROM sede_galeria
+                     WHERE sede_id = :sede_id
+                     AND activo = 1
+                     ORDER BY id DESC";
+
+        $stmtFotos = $conn->prepare($sqlFotos);
+        $stmtFotos->bindParam(":sede_id", $sede["id"]);
+        $stmtFotos->execute();
+
+        $sedesActivas[$index]["galeria"] = $stmtFotos->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 } catch (PDOException $e) {
-    $sedes = [];
-    $barberosActivos = [];
-    $barberosInactivos = [];
+    $sedesActivas = [];
+    $sedesInactivas = [];
     $errorDB = true;
 }
 
-function obtenerRutaFoto($foto) {
+function obtenerRutaFotoSede($foto) {
     if (empty($foto)) {
-        return "../../img/default-barber.webp";
+        return "../../img/default-sede.webp";
     }
 
     return "../../" . $foto;
@@ -67,7 +73,7 @@ function obtenerRutaFoto($foto) {
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-  <title>Barberos | Panel Admin</title>
+  <title>Sedes | Panel Admin</title>
 
   <link rel="icon" type="image/jpg" href="../../img/logo.jpg?v=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -80,7 +86,7 @@ function obtenerRutaFoto($foto) {
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
   <link rel="stylesheet"
-        href="../../css/style.css?v=4">
+        href="../../css/style.css?v=8">
 </head>
 
 <body>
@@ -97,43 +103,37 @@ function obtenerRutaFoto($foto) {
 
       <nav class="admin-menu">
 
-        <a href="panel_admin.php"
-           class="admin-menu-link">
+        <a href="panel_admin.php" class="admin-menu-link">
           <i class="bi bi-speedometer2"></i>
           Dashboard
         </a>
 
-        <a href="turnos.php"
-           class="admin-menu-link">
+        <a href="turnos.php" class="admin-menu-link">
           <i class="bi bi-calendar-check"></i>
           Turnos
         </a>
 
-        <a href="mensajes.php"
-           class="admin-menu-link">
+        <a href="mensajes.php" class="admin-menu-link">
           <i class="bi bi-envelope"></i>
           Mensajes
         </a>
 
-        <a href="servicios.php"
-           class="admin-menu-link">
+        <a href="servicios.php" class="admin-menu-link">
           <i class="bi bi-scissors"></i>
           Servicios
         </a>
 
-        <a href="barberos.php"
-           class="admin-menu-link active">
+        <a href="barberos.php" class="admin-menu-link">
           <i class="bi bi-person-badge"></i>
           Barberos
         </a>
 
-        <a href="sedes.php" class="admin-menu-link">
+        <a href="sedes.php" class="admin-menu-link active">
           <i class="bi bi-geo-alt"></i>
           Sedes
         </a>
 
-        <a href="usuarios.php"
-           class="admin-menu-link">
+        <a href="usuarios.php" class="admin-menu-link">
           <i class="bi bi-people"></i>
           Usuarios
         </a>
@@ -167,7 +167,7 @@ function obtenerRutaFoto($foto) {
         </p>
 
         <h1 class="admin-title">
-          Barberos
+          Sedes
         </h1>
       </div>
 
@@ -178,13 +178,8 @@ function obtenerRutaFoto($foto) {
         </div>
 
         <div>
-          <strong>
-            <?php echo htmlspecialchars($nombreAdmin); ?>
-          </strong>
-
-          <span>
-            <?php echo htmlspecialchars($emailAdmin); ?>
-          </span>
+          <strong><?php echo htmlspecialchars($nombreAdmin); ?></strong>
+          <span><?php echo htmlspecialchars($emailAdmin); ?></span>
         </div>
 
       </div>
@@ -194,62 +189,33 @@ function obtenerRutaFoto($foto) {
     <section class="admin-section-card">
 
       <div class="admin-section-header">
-
         <div>
-          <h3>Equipo de barberos</h3>
-
-          <p>
-            Gestioná fotos, nombres, especialidades y sedes asignadas.
-          </p>
+          <h3>Sedes de la barbería</h3>
+          <p>Gestioná sucursales, direcciones, foto principal y galería.</p>
         </div>
 
         <button type="button"
                 class="btn btn-gold"
                 style="margin-top: 12px;"
                 data-bs-toggle="modal"
-                data-bs-target="#crearBarberoModal">
-          Nuevo barbero
+                data-bs-target="#crearSedeModal">
+          Nueva sede
         </button>
-
       </div>
 
-      <?php if ($success === "creado"): ?>
+      <?php if ($success): ?>
         <div class="alert mb-4"
              style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
           <i class="bi bi-check2-circle me-2"></i>
-          Barbero creado correctamente.
+          Operación realizada correctamente.
         </div>
       <?php endif; ?>
 
-      <?php if ($success === "editado"): ?>
-        <div class="alert mb-4"
-             style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
-          <i class="bi bi-check2-circle me-2"></i>
-          Barbero editado correctamente.
-        </div>
-      <?php endif; ?>
-
-      <?php if ($success === "desactivado"): ?>
-        <div class="alert mb-4"
-             style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
-          <i class="bi bi-check2-circle me-2"></i>
-          Barbero desactivado correctamente.
-        </div>
-      <?php endif; ?>
-
-      <?php if ($success === "reactivado"): ?>
-        <div class="alert mb-4"
-             style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
-          <i class="bi bi-check2-circle me-2"></i>
-          Barbero reactivado correctamente.
-        </div>
-      <?php endif; ?>
-
-      <?php if ($error === "foto_invalida"): ?>
+      <?php if ($error): ?>
         <div class="alert mb-4"
              style="background:#2a1111;border:1px solid #8b1a1a;color:#ff8b8b;border-radius:2px">
           <i class="bi bi-exclamation-triangle me-2"></i>
-          La imagen no es válida. Usá JPG, JPEG, PNG o WEBP.
+          Ocurrió un error. Revisá los datos cargados.
         </div>
       <?php endif; ?>
 
@@ -257,136 +223,124 @@ function obtenerRutaFoto($foto) {
 
         <div class="admin-empty-state">
           <i class="bi bi-exclamation-triangle"></i>
-          <p>Error al cargar barberos.</p>
+          <p>Error al cargar sedes.</p>
         </div>
 
-      <?php elseif (empty($barberosActivos)): ?>
+      <?php elseif (empty($sedesActivas)): ?>
 
         <div class="admin-empty-state">
-          <i class="bi bi-person-badge"></i>
-          <p>No hay barberos activos cargados.</p>
+          <i class="bi bi-geo-alt"></i>
+          <p>No hay sedes activas cargadas.</p>
         </div>
 
       <?php else: ?>
 
         <div class="admin-barbers-grid">
 
-          <?php foreach ($barberosActivos as $barbero): ?>
+          <?php foreach ($sedesActivas as $sede): ?>
+
+            <?php $galeria = $sede["galeria"] ?? []; ?>
 
             <article class="admin-barber-card">
 
               <div class="admin-barber-image">
-                <img src="<?php echo htmlspecialchars(obtenerRutaFoto($barbero["foto"])); ?>"
-                     alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>">
+                <img src="<?php echo htmlspecialchars(obtenerRutaFotoSede($sede["foto"])); ?>"
+                     alt="<?php echo htmlspecialchars($sede["nombre"]); ?>">
               </div>
 
               <div class="admin-barber-content">
 
                 <span class="admin-badge-active">
-                  Activo
+                  Activa
                 </span>
 
                 <h4>
-                  <?php echo htmlspecialchars($barbero["nombre"]); ?>
+                  <?php echo htmlspecialchars($sede["nombre"]); ?>
                 </h4>
-
-                <p class="admin-barber-specialty">
-                  <?php echo htmlspecialchars($barbero["especialidad"]); ?>
-                </p>
 
                 <p class="admin-barber-branch">
                   <i class="bi bi-geo-alt-fill"></i>
-                  <?php echo htmlspecialchars($barbero["sede_nombre"]); ?>
+                  <?php echo htmlspecialchars($sede["direccion"]); ?>
                 </p>
-
-                <?php
-
-                $sqlFotos = "SELECT *
-                            FROM barbero_fotos
-                            WHERE barbero_id = :barbero_id
-                            AND activo = 1
-                            ORDER BY id DESC";
-
-                $stmtFotos = $conn->prepare($sqlFotos);
-                $stmtFotos->bindParam(":barbero_id", $barbero["id"]);
-                $stmtFotos->execute();
-
-                $fotosBarbero = $stmtFotos->fetchAll(PDO::FETCH_ASSOC);
-
-                ?>
 
                 <div class="admin-barber-gallery">
 
-                <div class="admin-barber-gallery-header">
-                    <span>Trabajos del barbero</span>
-                </div>
+                  <div class="admin-barber-gallery-header">
+                    <span>Galería de la sede</span>
+                  </div>
 
-                <?php if (!empty($fotosBarbero)): ?>
+                  <?php if (!empty($galeria)): ?>
 
                     <div class="admin-barber-gallery-grid">
 
-                    <?php foreach ($fotosBarbero as $foto): ?>
+                      <?php foreach ($galeria as $foto): ?>
 
                         <div class="admin-barber-mini-photo">
 
-                        <img src="../../<?php echo htmlspecialchars($foto["foto"]); ?>"
-                            alt="Trabajo barbero">
+                          <img src="../../<?php echo htmlspecialchars($foto["foto"]); ?>"
+                               alt="Foto sede">
 
-                        <form action="../../controllers/AdminBarberoController.php"
+                          <form action="../../controllers/AdminSedeController.php"
                                 method="POST">
 
                             <input type="hidden"
-                                name="accion"
-                                value="eliminar_foto">
+                                   name="accion"
+                                   value="eliminar_foto">
 
                             <input type="hidden"
-                                name="foto_id"
-                                value="<?php echo $foto["id"]; ?>">
+                                   name="foto_id"
+                                   value="<?php echo $foto["id"]; ?>">
 
                             <input type="hidden"
-                                name="foto_ruta"
-                                value="<?php echo htmlspecialchars($foto["foto"]); ?>">
+                                   name="foto_ruta"
+                                   value="<?php echo htmlspecialchars($foto["foto"]); ?>">
 
                             <button type="submit"
                                     class="admin-mini-delete">
-                            <i class="bi bi-trash"></i>
+                              <i class="bi bi-trash"></i>
                             </button>
 
-                        </form>
+                          </form>
 
                         </div>
 
-                    <?php endforeach; ?>
+                      <?php endforeach; ?>
 
                     </div>
 
-                <?php endif; ?>
+                  <?php else: ?>
 
-                <form action="../../controllers/AdminBarberoController.php"
+                    <p style="color:var(--muted);font-size:12px">
+                      Esta sede todavía no tiene fotos de galería.
+                    </p>
+
+                  <?php endif; ?>
+
+                  <form action="../../controllers/AdminSedeController.php"
                         method="POST"
                         enctype="multipart/form-data"
                         class="admin-upload-mini-form">
 
                     <input type="hidden"
-                        name="accion"
-                        value="agregar_foto">
+                           name="accion"
+                           value="agregar_foto">
 
                     <input type="hidden"
-                        name="barbero_id"
-                        value="<?php echo $barbero["id"]; ?>">
+                           name="sede_id"
+                           value="<?php echo $sede["id"]; ?>">
 
                     <input type="file"
-                        name="foto"
-                        class="form-control form-control-sm"
-                        accept=".jpg,.jpeg,.png,.webp"
-                        required>
+                           name="foto"
+                           class="form-control form-control-sm"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           required>
 
                     <button type="submit"
                             class="btn btn-outline-gold btn-sm w-100 mt-2">
-                    Agregar mini foto
+                      Agregar foto
                     </button>
 
-                </form>
+                  </form>
 
                 </div>
 
@@ -395,14 +349,14 @@ function obtenerRutaFoto($foto) {
                   <button type="button"
                           class="btn btn-outline-gold btn-sm"
                           data-bs-toggle="modal"
-                          data-bs-target="#editarBarberoModal<?php echo $barbero["id"]; ?>">
+                          data-bs-target="#editarSedeModal<?php echo $sede["id"]; ?>">
                     Editar
                   </button>
 
                   <button type="button"
                           class="btn admin-btn-danger"
                           data-bs-toggle="modal"
-                          data-bs-target="#desactivarBarberoModal<?php echo $barbero["id"]; ?>">
+                          data-bs-target="#desactivarSedeModal<?php echo $sede["id"]; ?>">
                     Eliminar
                   </button>
 
@@ -412,16 +366,15 @@ function obtenerRutaFoto($foto) {
 
             </article>
 
-            <!-- MODAL EDITAR BARBERO -->
             <div class="modal fade"
-                 id="editarBarberoModal<?php echo $barbero["id"]; ?>"
+                 id="editarSedeModal<?php echo $sede["id"]; ?>"
                  tabindex="-1"
                  aria-hidden="true">
 
               <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content admin-message-modal">
 
-                  <form action="../../controllers/AdminBarberoController.php"
+                  <form action="../../controllers/AdminSedeController.php"
                         method="POST"
                         enctype="multipart/form-data">
 
@@ -431,15 +384,15 @@ function obtenerRutaFoto($foto) {
 
                     <input type="hidden"
                            name="id"
-                           value="<?php echo $barbero["id"]; ?>">
+                           value="<?php echo $sede["id"]; ?>">
 
                     <input type="hidden"
                            name="foto_actual"
-                           value="<?php echo htmlspecialchars($barbero["foto"]); ?>">
+                           value="<?php echo htmlspecialchars($sede["foto"]); ?>">
 
                     <div class="modal-header">
                       <h5 class="modal-title">
-                        Editar barbero
+                        Editar sede
                       </h5>
 
                       <button type="button"
@@ -451,70 +404,39 @@ function obtenerRutaFoto($foto) {
                     <div class="modal-body">
 
                       <div class="admin-current-photo mb-4">
-                        <img src="<?php echo htmlspecialchars(obtenerRutaFoto($barbero["foto"])); ?>"
-                             alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>">
+                        <img src="<?php echo htmlspecialchars(obtenerRutaFotoSede($sede["foto"])); ?>"
+                             alt="<?php echo htmlspecialchars($sede["nombre"]); ?>">
 
                         <div>
-                          <strong>Foto actual</strong>                        
+                          <strong>Foto actual</strong>
+                          <span>Si no elegís una nueva imagen, se mantiene esta foto.</span>
                         </div>
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label">
-                          Nombre
-                        </label>
-
+                        <label class="form-label">Nombre</label>
                         <input type="text"
                                name="nombre"
                                class="form-control"
-                               value="<?php echo htmlspecialchars($barbero["nombre"]); ?>"
+                               value="<?php echo htmlspecialchars($sede["nombre"]); ?>"
                                required>
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label">
-                          Especialidad
-                        </label>
-
+                        <label class="form-label">Dirección</label>
                         <input type="text"
-                               name="especialidad"
+                               name="direccion"
                                class="form-control"
-                               value="<?php echo htmlspecialchars($barbero["especialidad"]); ?>"
+                               value="<?php echo htmlspecialchars($sede["direccion"]); ?>"
                                required>
                       </div>
 
                       <div class="mb-3">
-                        <label class="form-label">
-                          Sede
-                        </label>
-
-                        <select name="sede_id"
-                                class="form-select"
-                                required>
-
-                          <?php foreach ($sedes as $sede): ?>
-                            <option value="<?php echo $sede["id"]; ?>"
-                              <?php echo ($sede["id"] == $barbero["sede_id"]) ? "selected" : ""; ?>>
-                              <?php echo htmlspecialchars($sede["nombre"]); ?>
-                            </option>
-                          <?php endforeach; ?>
-
-                        </select>
-                      </div>
-
-                      <div class="mb-3">
-                        <label class="form-label">
-                          Cambiar foto
-                        </label>
-
+                        <label class="form-label">Cambiar foto principal</label>
                         <input type="file"
                                name="foto"
                                class="form-control"
                                accept=".jpg,.jpeg,.png,.webp">
-
-                        <small style="color:var(--muted);font-size:12px">
-                          Formatos permitidos: JPG, JPEG, PNG y WEBP.
-                        </small>
                       </div>
 
                     </div>
@@ -538,9 +460,8 @@ function obtenerRutaFoto($foto) {
               </div>
             </div>
 
-            <!-- MODAL DESACTIVAR BARBERO -->
             <div class="modal fade"
-                 id="desactivarBarberoModal<?php echo $barbero["id"]; ?>"
+                 id="desactivarSedeModal<?php echo $sede["id"]; ?>"
                  tabindex="-1"
                  aria-hidden="true">
 
@@ -562,11 +483,11 @@ function obtenerRutaFoto($foto) {
                     <i class="bi bi-trash3-fill delete-icon"></i>
 
                     <h4 class="delete-title">
-                      ¿Deseás eliminar este barbero?
+                      ¿Deseás eliminar esta sede?
                     </h4>
 
                     <p class="delete-text">
-                      No se borrará de la base de datos, solo quedará inactivo.
+                      No se borrará de la base de datos, solo quedará inactiva.
                     </p>
                   </div>
 
@@ -578,7 +499,7 @@ function obtenerRutaFoto($foto) {
                       Cancelar
                     </button>
 
-                    <form action="../../controllers/AdminBarberoController.php"
+                    <form action="../../controllers/AdminSedeController.php"
                           method="POST">
 
                       <input type="hidden"
@@ -587,7 +508,7 @@ function obtenerRutaFoto($foto) {
 
                       <input type="hidden"
                              name="id"
-                             value="<?php echo $barbero["id"]; ?>">
+                             value="<?php echo $sede["id"]; ?>">
 
                       <button type="submit"
                               class="btn admin-btn-danger">
@@ -608,21 +529,21 @@ function obtenerRutaFoto($foto) {
 
       <?php endif; ?>
 
-      <?php if (!empty($barberosInactivos)): ?>
+      <?php if (!empty($sedesInactivas)): ?>
 
         <div class="mt-5">
 
           <button class="btn btn-outline-gold"
                   type="button"
                   data-bs-toggle="collapse"
-                  data-bs-target="#barberosInactivos">
-            Ver inactivos
+                  data-bs-target="#sedesInactivas">
+            Ver inactivas
           </button>
 
           <div class="collapse mt-4"
-               id="barberosInactivos">
+               id="sedesInactivas">
 
-            <h3 class="mb-3">Barberos inactivos</h3>
+            <h3 class="mb-3">Sedes inactivas</h3>
 
             <div class="admin-table-wrap">
 
@@ -630,9 +551,8 @@ function obtenerRutaFoto($foto) {
 
                 <thead>
                   <tr>
-                    <th>Barbero</th>
-                    <th>Especialidad</th>
                     <th>Sede</th>
+                    <th>Dirección</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -640,21 +560,20 @@ function obtenerRutaFoto($foto) {
 
                 <tbody>
 
-                  <?php foreach ($barberosInactivos as $barbero): ?>
+                  <?php foreach ($sedesInactivas as $sede): ?>
 
                     <tr>
-                      <td><?php echo htmlspecialchars($barbero["nombre"]); ?></td>
-                      <td><?php echo htmlspecialchars($barbero["especialidad"]); ?></td>
-                      <td><?php echo htmlspecialchars($barbero["sede_nombre"]); ?></td>
+                      <td><?php echo htmlspecialchars($sede["nombre"]); ?></td>
+                      <td><?php echo htmlspecialchars($sede["direccion"]); ?></td>
                       <td>
                         <span class="admin-badge-inactive">
-                          Inactivo
+                          Inactiva
                         </span>
                       </td>
                       <td>
                         <div class="admin-actions">
 
-                          <form action="../../controllers/AdminBarberoController.php"
+                          <form action="../../controllers/AdminSedeController.php"
                                 method="POST">
 
                             <input type="hidden"
@@ -663,7 +582,7 @@ function obtenerRutaFoto($foto) {
 
                             <input type="hidden"
                                    name="id"
-                                   value="<?php echo $barbero["id"]; ?>">
+                                   value="<?php echo $sede["id"]; ?>">
 
                             <button type="submit"
                                     class="btn btn-outline-gold btn-sm">
@@ -696,16 +615,15 @@ function obtenerRutaFoto($foto) {
 
 </main>
 
-<!-- MODAL NUEVO BARBERO -->
 <div class="modal fade"
-     id="crearBarberoModal"
+     id="crearSedeModal"
      tabindex="-1"
      aria-hidden="true">
 
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content admin-message-modal">
 
-      <form action="../../controllers/AdminBarberoController.php"
+      <form action="../../controllers/AdminSedeController.php"
             method="POST"
             enctype="multipart/form-data">
 
@@ -715,7 +633,7 @@ function obtenerRutaFoto($foto) {
 
         <div class="modal-header">
           <h5 class="modal-title">
-            Nuevo barbero
+            Nueva sede
           </h5>
 
           <button type="button"
@@ -727,63 +645,29 @@ function obtenerRutaFoto($foto) {
         <div class="modal-body">
 
           <div class="mb-3">
-            <label class="form-label">
-              Nombre
-            </label>
-
+            <label class="form-label">Nombre</label>
             <input type="text"
                    name="nombre"
                    class="form-control"
+                   placeholder="Ej: Sede Caballito"
                    required>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">
-              Especialidad
-            </label>
-
+            <label class="form-label">Dirección</label>
             <input type="text"
-                   name="especialidad"
+                   name="direccion"
                    class="form-control"
-                   placeholder="Ej: Fades & Texturas"
+                   placeholder="Ej: Av. Pedro Goyena 1234, CABA"
                    required>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">
-              Sede
-            </label>
-
-            <select name="sede_id"
-                    class="form-select"
-                    required>
-
-              <option value="">
-                Seleccionar sede
-              </option>
-
-              <?php foreach ($sedes as $sede): ?>
-                <option value="<?php echo $sede["id"]; ?>">
-                  <?php echo htmlspecialchars($sede["nombre"]); ?>
-                </option>
-              <?php endforeach; ?>
-
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">
-              Foto
-            </label>
-
+            <label class="form-label">Foto principal</label>
             <input type="file"
                    name="foto"
                    class="form-control"
                    accept=".jpg,.jpeg,.png,.webp">
-
-            <small style="color:var(--muted);font-size:12px">
-              Formatos permitidos: JPG, JPEG, PNG y WEBP.
-            </small>
           </div>
 
         </div>
@@ -797,7 +681,7 @@ function obtenerRutaFoto($foto) {
 
           <button type="submit"
                   class="btn btn-gold">
-            Crear barbero
+            Crear sede
           </button>
         </div>
 

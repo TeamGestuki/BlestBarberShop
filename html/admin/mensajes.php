@@ -41,6 +41,7 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mensajes | Panel Admin</title>
 
+  <link rel="icon" type="image/jpg" href="../../img/logo.jpg?v=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -82,6 +83,11 @@ try {
             <i class="bi bi-person-badge"></i>
             Barberos
           </a>
+
+          <a href="sedes.php" class="admin-menu-link">
+          <i class="bi bi-geo-alt"></i>
+          Sedes
+        </a>
 
           <a href="usuarios.php" class="admin-menu-link">
             <i class="bi bi-people"></i>

@@ -19,6 +19,7 @@ require_once '../../config/database.php';
 $totalMensajes = 0;
 $totalServicios = 0;
 $totalUsuarios = 0;
+$totalTurnos = 0;
 
 try {
     $sqlMensajes = "SELECT COUNT(*) AS total FROM contactos";
@@ -39,10 +40,17 @@ try {
     $resultadoUsuarios = $stmtUsuarios->fetch(PDO::FETCH_ASSOC);
     $totalUsuarios = $resultadoUsuarios["total"] ?? 0;
 
+    $sqlTurnos = "SELECT COUNT(*) AS total FROM turnos";
+    $stmtTurnos = $conn->prepare($sqlTurnos);
+    $stmtTurnos->execute();
+    $resultadoTurnos = $stmtTurnos->fetch(PDO::FETCH_ASSOC);
+    $totalTurnos = $resultadoTurnos["total"] ?? 0;
+
 } catch (PDOException $e) {
     $totalMensajes = 0;
     $totalServicios = 0;
     $totalUsuarios = 0;
+    $totalTurnos = 0;
 }
 
 ?>
@@ -54,6 +62,7 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Admin | Blest Barber Shop</title>
 
+  <link rel="icon" type="image/jpg" href="../../img/logo.jpg?v=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -65,11 +74,13 @@ try {
   <main class="admin-layout">
 
     <aside class="admin-sidebar">
-      <div class="admin-brand">
-        <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
-      </div>
+      <div>
+        <div class="admin-brand">
+          <span class="brand-el">BLEST</span><span class="brand-filo"> BARBER</span>
+        </div>
 
-      <nav class="admin-menu">
+    <nav class="admin-menu">
+
         <a href="panel_admin.php" class="admin-menu-link active">
           <i class="bi bi-speedometer2"></i>
           Dashboard
@@ -95,11 +106,17 @@ try {
           Barberos
         </a>
 
+        <a href="sedes.php" class="admin-menu-link">
+          <i class="bi bi-geo-alt"></i>
+          Sedes
+        </a>
+
         <a href="usuarios.php" class="admin-menu-link">
           <i class="bi bi-people"></i>
           Usuarios
         </a>
       </nav>
+  </div>
 
       <form action="../../controllers/AuthController.php"
       method="POST">
@@ -155,7 +172,7 @@ try {
         <article class="admin-stat-card">
           <i class="bi bi-calendar-check"></i>
           <span>Turnos</span>
-          <strong>0</strong>
+          <strong><?php echo intval($totalTurnos); ?></strong>
           <small>Pendientes de gestión</small>
         </article>
 

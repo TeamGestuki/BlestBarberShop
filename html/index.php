@@ -1,19 +1,30 @@
 <?php
-require_once '../config/database.php';
+require_once '../config/session_check.php';
 
 try {
-    $sql = "SELECT *
-            FROM servicios
-            WHERE activo = 1
-            ORDER BY id ASC";
+    $sqlServicios = "SELECT *
+                     FROM servicios
+                     WHERE activo = 1
+                     ORDER BY id ASC";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmtServicios = $conn->prepare($sqlServicios);
+    $stmtServicios->execute();
 
-    $servicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $servicios = $stmtServicios->fetchAll(PDO::FETCH_ASSOC);
+
+    $sqlSedes = "SELECT *
+                 FROM sedes
+                 WHERE activo = 1
+                 ORDER BY id ASC";
+
+    $stmtSedes = $conn->prepare($sqlSedes);
+    $stmtSedes->execute();
+
+    $sedes = $stmtSedes->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     $servicios = [];
+    $sedes = [];
 }
 ?>
 
@@ -23,7 +34,8 @@ try {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blest Barber Shop</title> 
-  <link rel="icon" type="image/png" href="../img/logo.png">
+
+  <link rel="icon" type="image/jpg" href="../img/logo.jpg">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -54,31 +66,88 @@ try {
             </a>
 
             <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="SedeNaon.php">
-                  <i class="bi bi-geo-alt-fill"></i>
-                  Sede Naón
-                </a>
-              </li>
 
-              <li>
-                <a class="dropdown-item" href="SedeVLuro.php">
-                  <i class="bi bi-geo-alt-fill"></i>
-                  Sede Villa Luro
-                </a>
-              </li>
+              <?php if (empty($sedes)): ?>
+
+                <li>
+                  <span class="dropdown-item" style="color:var(--muted)!important">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    Próximamente
+                  </span>
+                </li>
+
+              <?php else: ?>
+
+                <?php foreach ($sedes as $sede): ?>
+                  <li>
+                    <a class="dropdown-item" href="sede.php?id=<?php echo $sede["id"]; ?>">
+                      <i class="bi bi-geo-alt-fill"></i>
+                      <?php echo htmlspecialchars($sede["nombre"]); ?>
+                    </a>
+                  </li>
+                <?php endforeach; ?>
+
+              <?php endif; ?>
+
             </ul>
           </li>
 
           <li class="nav-item"><a class="nav-link" href="contacto.php">Contacto</a></li>
 
-          <li class="nav-item ms-lg-2">
-            <a class="btn btn-outline-gold btn-sm" href="login.php">Ingresar</a>
-          </li>
+          <?php if (isset($_SESSION["usuario_id"])): ?>
 
-          <li class="nav-item ms-lg-1">
-            <a class="btn btn-gold btn-sm" href="registro.php">Reservar turno</a>
-          </li>
+        <li class="nav-item dropdown ms-lg-2">
+          <a class="btn btn-outline-gold btn-sm dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>
+            <?php echo htmlspecialchars($_SESSION["usuario_nombre"]); ?>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item"
+                href="<?php echo $_SESSION["usuario_rol"] === "admin" ? 'admin/panel_admin.php' : 'user/panel_usuario.php'; ?>">
+                <i class="bi <?php echo $_SESSION["usuario_rol"] === "admin" ? 'bi-speedometer2' : 'bi-person'; ?>"></i>
+                <?php echo $_SESSION["usuario_rol"] === "admin" ? 'Panel admin' : 'Mi cuenta'; ?>
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="user/reservar_turno.php">
+                <i class="bi bi-calendar-plus"></i>
+                Reservar turno
+              </a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <form action="../controllers/AuthController.php" method="POST">
+                <input type="hidden" name="action" value="logout">
+                <button type="submit" class="dropdown-item">
+                  <i class="bi bi-box-arrow-left"></i>
+                  Cerrar sesión
+                </button>
+              </form>
+            </li>
+          </ul>
+        </li>
+
+      <?php else: ?>
+
+  <li class="nav-item ms-lg-2">
+    <a class="btn btn-outline-gold btn-sm" href="login.php">Ingresar</a>
+  </li>
+
+  <a href="<?php echo isset($_SESSION["usuario_id"]) ? 'user/reservar_turno.php' : 'login.php'; ?>"
+   class="btn btn-gold btn-lg">
+  Reservar turno
+</a>
+
+<?php endif; ?>
         </ul>
       </div>
     </div>
@@ -259,7 +328,8 @@ try {
                     <?php endif; ?>
                   </span>
 
-                  <a href="registro.php" class="btn-service-link">
+                  <a href="<?php echo isset($_SESSION["usuario_id"]) ? 'user/reservar_turno.php' : 'login.php'; ?>"
+                    class="btn-service-link">
                     Reservar <i class="bi bi-arrow-right"></i>
                   </a>
                 </div>
@@ -282,7 +352,9 @@ try {
     <div class="container position-relative">
       <div class="row justify-content-center text-center">
         <div class="col-lg-7">
-          <p class="section-eyebrow">Dos ubicaciones</p>
+          <p class="section-eyebrow">
+            <?php echo count($sedes) === 1 ? "Una ubicación" : "Nuestras ubicaciones"; ?>
+          </p>
 
           <h2 class="cta-title">
             Encontranos cerca<br>
@@ -290,12 +362,30 @@ try {
           </h2>
 
           <p class="cta-body">
-            Tenemos dos sedes en CABA. Elegí la que te quede más cómoda y reservá tu turno online.
+            Elegí la sede que te quede más cómoda y reservá tu turno online.
           </p>
 
           <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
-            <a href="SedeNaon.php" class="btn btn-gold btn-lg">Sede Naón</a>
-            <a href="SedeVLuro.php" class="btn btn-outline-gold btn-lg">Sede Villa Luro</a>
+
+            <?php if (empty($sedes)): ?>
+
+              <a href="contacto.php" class="btn btn-gold btn-lg">
+                Consultar ubicación
+              </a>
+
+            <?php else: ?>
+
+              <?php foreach ($sedes as $index => $sede): ?>
+
+                <a href="sede.php?id=<?php echo $sede["id"]; ?>"
+                   class="btn <?php echo $index === 0 ? 'btn-gold' : 'btn-outline-gold'; ?> btn-lg">
+                  <?php echo htmlspecialchars($sede["nombre"]); ?>
+                </a>
+
+              <?php endforeach; ?>
+
+            <?php endif; ?>
+
           </div>
         </div>
       </div>
@@ -335,8 +425,15 @@ try {
           <ul class="footer-links">
             <li><a href="index.php">Inicio</a></li>
             <li><a href="index.php#servicios">Servicios</a></li>
-            <li><a href="SedeNaon.php">Sede Naón</a></li>
-            <li><a href="SedeVLuro.php">Sede Villa Luro</a></li>
+
+            <?php foreach ($sedes as $sede): ?>
+              <li>
+                <a href="sede.php?id=<?php echo $sede["id"]; ?>">
+                  <?php echo htmlspecialchars($sede["nombre"]); ?>
+                </a>
+              </li>
+            <?php endforeach; ?>
+
             <li><a href="contacto.php">Contacto</a></li>
           </ul>
         </div>
@@ -347,7 +444,17 @@ try {
           <ul class="footer-links">
             <li><a href="registro.php">Registrarse</a></li>
             <li><a href="login.php">Ingresar</a></li>
-            <li><a href="user/panel_usuario.php">Mi panel</a></li>
+            <li>
+              <a href="<?php echo $_SESSION["usuario_rol"] === "admin"
+                  ? 'admin/panel_admin.php'
+                  : 'user/panel_usuario.php'; ?>">
+
+                <?php echo $_SESSION["usuario_rol"] === "admin"
+                  ? 'Panel admin'
+                  : 'Mi cuenta'; ?>
+
+              </a>
+            </li>
             <li><a href="terminos.html">Términos y condiciones</a></li>
           </ul>
         </div>
@@ -356,8 +463,22 @@ try {
           <h5 class="footer-heading">Contacto</h5>
 
           <ul class="footer-contact-list">
-            <li><i class="bi bi-geo-alt-fill"></i> Montiel 1551, Barrio Naón</li>
-            <li><i class="bi bi-geo-alt-fill"></i> Av. Rivadavia 10545, Villa Luro</li>
+
+            <?php if (empty($sedes)): ?>
+
+              <li><i class="bi bi-geo-alt-fill"></i> Próximamente nuevas sedes</li>
+
+            <?php else: ?>
+
+              <?php foreach ($sedes as $sede): ?>
+                <li>
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <?php echo htmlspecialchars($sede["direccion"]); ?>
+                </li>
+              <?php endforeach; ?>
+
+            <?php endif; ?>
+
             <li><i class="bi bi-clock-fill"></i> Mar–Sáb 10:30–13:00 / 14:30–20:00</li>
             <li><i class="bi bi-telephone-fill"></i> +54 9 11 5126-7271</li>
             <li><i class="bi bi-envelope-fill"></i> Juancruzargentina05@gmail.com</li>
