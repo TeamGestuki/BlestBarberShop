@@ -112,7 +112,7 @@ try {
         <div class="col-lg-5 d-none d-lg-flex justify-content-end">
           <div class="hero-img-frame">
             <div class="hero-img-inner">
-              <img src="../img/barber.webp"
+              <img src="../img/sucursalia.webp"
                    alt="Barbero trabajando"
                    class="hero-photo">
             </div>
@@ -154,11 +154,11 @@ try {
 
         <div class="col-lg-5">
           <div class="about-img-grid">
-            <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&q=80"
+            <img src="../img/barber.webp"
                  alt="Interior barbería"
                  class="about-img-main">
 
-            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=300&q=80"
+            <img src="../img/herramientas.webp"
                  alt="Herramientas"
                  class="about-img-side">
 
