@@ -208,6 +208,42 @@ try {
 
             <?php else: ?>
 
+                <?php
+                $error = $_GET["error"] ?? "";
+                ?>
+
+                <?php if ($error === "usuario_turno_superpuesto"): ?>
+                    <div class="alert mb-4"
+                        style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Ya tenés un turno activo que se superpone con ese horario.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($error === "horario_ocupado"): ?>
+                    <div class="alert mb-4"
+                        style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Ese horario ya fue reservado. Elegí otro disponible.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($error === "fecha_pasada"): ?>
+                    <div class="alert mb-4"
+                        style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        No podés reservar una fecha pasada.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($error === "dia_cerrado"): ?>
+                    <div class="alert mb-4"
+                        style="background:#2a1111;border:1px solid #8b1a1a;color:#f0ede8;border-radius:2px">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        La barbería permanece cerrada domingos y lunes.
+                    </div>
+                <?php endif; ?>
+
                 <form method="GET" class="row g-3">
 
                     <div class="col-md-3">

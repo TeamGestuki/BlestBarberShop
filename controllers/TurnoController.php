@@ -140,6 +140,31 @@ if ($accion === "crear") {
             exit;
         }
 
+        $stmtTurnosUsuario = $conn->prepare("SELECT
+                                                t.hora,
+                                                sv.duracion_min
+                                             FROM turnos t
+                                             INNER JOIN servicios sv ON t.servicio_id = sv.id
+                                             WHERE t.usuario_id = :usuario_id
+                                             AND t.fecha = :fecha
+                                             AND t.estado IN ('pendiente', 'confirmado')");
+
+        $stmtTurnosUsuario->bindParam(":usuario_id", $usuarioId, PDO::PARAM_INT);
+        $stmtTurnosUsuario->bindParam(":fecha", $fecha);
+        $stmtTurnosUsuario->execute();
+
+        $turnosUsuario = $stmtTurnosUsuario->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($turnosUsuario as $turnoUsuario) {
+            $inicioExistenteUsuario = strtotime($fecha . " " . $turnoUsuario["hora"]);
+            $finExistenteUsuario = $inicioExistenteUsuario + (intval($turnoUsuario["duracion_min"]) * 60);
+
+            if ($inicioNuevo < $finExistenteUsuario && $finNuevo > $inicioExistenteUsuario) {
+                header("Location: ../html/user/reservar_turno.php?error=usuario_turno_superpuesto");
+                exit;
+            }
+        }
+
         $stmtTurnos = $conn->prepare("SELECT
                                         t.hora,
                                         sv.duracion_min

@@ -201,6 +201,14 @@ function badgeEstadoUsuario($estado) {
 
         </header>
 
+        <?php if ($success === "turno_creado"): ?>
+            <div class="alert mb-4"
+                style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
+                <i class="bi bi-check2-circle me-2"></i>
+                Turno reservado correctamente. Cualquier consulta contactar con la barbería.
+            </div>
+        <?php endif; ?>
+
         <?php if ($success === "turno_cancelado"): ?>
             <div class="alert mb-4"
                  style="background:#0d2418;border:1px solid #2a6644;color:#7ecba1;border-radius:2px">
@@ -347,26 +355,81 @@ function badgeEstadoUsuario($estado) {
                                     </td>
 
                                     <td>
-                                        <form action="../../controllers/TurnoController.php"
-                                              method="POST">
-
-                                            <input type="hidden"
-                                                   name="accion"
-                                                   value="cancelar_usuario">
-
-                                            <input type="hidden"
-                                                   name="id"
-                                                   value="<?php echo $turno["id"]; ?>">
-
-                                            <button type="submit"
-                                                    class="btn admin-btn-danger btn-sm">
-                                                Cancelar
-                                            </button>
-
-                                        </form>
+                                        <button type="button"
+                                                class="btn admin-btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#cancelarTurnoModal<?php echo $turno["id"]; ?>">
+                                            Cancelar
+                                        </button>
                                     </td>
                                 </tr>
 
+                                <div class="modal fade"
+                                    id="cancelarTurnoModal<?php echo $turno["id"]; ?>"
+                                    tabindex="-1"
+                                    aria-hidden="true">
+
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content admin-message-modal">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    Cancelar turno
+                                                </h5>
+
+                                                <button type="button"
+                                                        class="btn-close btn-close-white"
+                                                        data-bs-dismiss="modal">
+                                                </button>
+                                            </div>
+
+                                            <div class="modal-body text-center">
+                                                <i class="bi bi-calendar-x delete-icon"></i>
+
+                                                <h4 class="delete-title">
+                                                    ¿Querés cancelar este turno?
+                                                </h4>
+
+                                                <p class="delete-text">
+                                                    Esta acción va a cancelar tu reserva del
+                                                    <strong><?php echo date("d/m/Y", strtotime($turno["fecha"])); ?></strong>
+                                                    a las
+                                                    <strong><?php echo substr($turno["hora"], 0, 5); ?></strong>.
+                                                </p>
+                                            </div>
+
+                                            <div class="modal-footer justify-content-center">
+
+                                                <button type="button"
+                                                        class="btn btn-outline-gold"
+                                                        data-bs-dismiss="modal">
+                                                    Volver
+                                                </button>
+
+                                                <form action="../../controllers/TurnoController.php"
+                                                    method="POST">
+
+                                                    <input type="hidden"
+                                                        name="accion"
+                                                        value="cancelar_usuario">
+
+                                                    <input type="hidden"
+                                                        name="id"
+                                                        value="<?php echo $turno["id"]; ?>">
+
+                                                    <button type="submit"
+                                                            class="btn admin-btn-danger">
+                                                        Sí, cancelar
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             <?php endforeach; ?>
 
                         </tbody>
