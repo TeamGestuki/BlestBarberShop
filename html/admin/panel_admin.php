@@ -153,18 +153,22 @@ try {
         </div>
       </header>
 
-      <section class="admin-welcome-card">
-        <div>
+      <section class="admin-welcome-card admin-welcome-card-visual">
+        <div class="admin-welcome-content">
           <h2>Bienvenido, <?php echo htmlspecialchars($nombreAdmin); ?>.</h2>
           <p>
             Desde este panel vas a poder administrar turnos, mensajes,
             servicios, barberos y usuarios del sistema.
           </p>
+
+          <a href="../index.php" class="btn btn-outline-gold btn-sm">
+            Ver sitio
+          </a>
         </div>
 
-        <a href="../index.php" class="btn btn-outline-gold btn-sm">
-          Ver sitio
-        </a>
+        <div class="admin-welcome-image">
+          <img src="../../img/logo.jpg" alt="Imagen decorativa del panel administrativo">
+        </div>
       </section>
 
       <section class="admin-stats-grid">

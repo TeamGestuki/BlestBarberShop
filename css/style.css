@@ -1827,3 +1827,114 @@ img { max-width: 100%; }
   color: var(--muted);
   margin: 0;
 }
+
+/* ---- ADMIN DASHBOARD IMAGEN BIENVENIDA ---- */
+
+.admin-welcome-card-visual {
+  display: grid;
+  grid-template-columns: 1.5fr .5fr;
+  align-items: stretch;
+  padding: 0;
+  overflow: hidden;
+  min-height: 220px;
+}
+
+.admin-welcome-content {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.admin-welcome-content p {
+  margin-bottom: 24px;
+}
+
+.admin-welcome-image {
+  position: relative;
+  min-height: 220px;
+  border-left: 1px solid rgba(201,168,76,0.15);
+  overflow: hidden;
+  background: #050505;
+}
+
+.admin-welcome-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10,10,10,.65), rgba(10,10,10,.12)),
+    linear-gradient(135deg, rgba(201,168,76,.18), transparent 55%);
+  pointer-events: none;
+}
+
+.admin-welcome-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: grayscale(35%) contrast(1.08) brightness(.78);
+  transition: .4s ease;
+}
+
+.admin-welcome-card-visual:hover .admin-welcome-image img {
+  transform: scale(1.04);
+  filter: grayscale(10%) contrast(1.08) brightness(.85);
+}
+
+@media (max-width: 900px) {
+  .admin-welcome-card-visual {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-welcome-image {
+    min-height: 180px;
+    border-left: none;
+    border-top: 1px solid rgba(201,168,76,0.15);
+  }
+}
+
+/* ---- FONDO PATTERN BARBERÍA PARA PANELES ---- */
+
+.admin-layout {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--bg);
+}
+
+.admin-layout::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  opacity: .20;
+
+  background-image: url("../img/background.webp");
+  background-size: 220px 220px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+/* FONDO INDEX */
+
+body {
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  z-index: 0;
+  pointer-events: none;
+
+  background-image: url("../img/indexbackground.webp");
+  background-repeat: repeat;
+  background-size: 350px;
+
+  opacity: .04;
+}
