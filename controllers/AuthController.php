@@ -88,7 +88,7 @@ function register($conn) {
 
     $stmt->execute();
 
-    header("Location: ../html/login.php?registro=exitoso");
+    login($conn);
     exit;
 }
 

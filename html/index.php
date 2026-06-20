@@ -21,7 +21,6 @@ try {
     $stmtSedes->execute();
 
     $sedes = $stmtSedes->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     $servicios = [];
     $sedes = [];
@@ -173,7 +172,10 @@ try {
           </p>
 
           <div class="d-flex gap-3 flex-wrap mt-4">
-            <a href="registro.php" class="btn btn-gold btn-lg">Reservar turno</a>
+            <a href="<?php echo isset($_SESSION["usuario_id"]) ? 'user/reservar_turno.php' : 'login.php'; ?>"
+            class="btn btn-gold btn-lg">
+            Reservar turno
+            </a>
             <a href="#servicios" class="btn btn-outline-gold btn-lg">Ver servicios</a>
           </div>
         </div>

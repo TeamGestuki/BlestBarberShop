@@ -119,7 +119,7 @@ img { max-width: 100%; }
 
 /* ---- NAVBAR ---- */
 #mainNav {
-  background-color: transparent;
+  background-color: rgba(10,10,10,0.97);
   padding: 20px 0;
   transition: background-color 0.4s ease, padding 0.4s ease, box-shadow 0.4s ease;
   border-bottom: 1px solid transparent;

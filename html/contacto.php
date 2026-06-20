@@ -62,22 +62,22 @@ try {
           </a>
 
           <ul class="dropdown-menu">
-            <?php if (empty($sedes)): ?>
+            <?php if (empty($sedes)) : ?>
               <li>
                 <span class="dropdown-item" style="color:var(--muted)!important">
                   <i class="bi bi-geo-alt-fill"></i>
                   Próximamente
                 </span>
               </li>
-            <?php else: ?>
-              <?php foreach ($sedes as $sede): ?>
+            <?php else : ?>
+                <?php foreach ($sedes as $sede) : ?>
                 <li>
                   <a class="dropdown-item" href="sede.php?id=<?php echo $sede["id"]; ?>">
                     <i class="bi bi-geo-alt-fill"></i>
                     <?php echo htmlspecialchars($sede["nombre"]); ?>
                   </a>
                 </li>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
             <?php endif; ?>
           </ul>
         </li>
@@ -86,7 +86,7 @@ try {
           <a class="nav-link active" href="contacto.php" style="color:var(--gold)!important">Contacto</a>
         </li>
 
-        <?php if (isset($_SESSION["usuario_id"])): ?>
+        <?php if (isset($_SESSION["usuario_id"])) : ?>
 
           <li class="nav-item dropdown ms-lg-2">
             <a class="btn btn-outline-gold btn-sm dropdown-toggle"
