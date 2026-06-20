@@ -167,7 +167,7 @@ try {
         </div>
 
         <div class="admin-welcome-image">
-          <img src="../../img/logo.jpg" alt="Imagen decorativa del panel administrativo">
+          <img src="../../img/adminpanel_img.webp" alt="Imagen decorativa del panel administrativo">
         </div>
       </section>
 
