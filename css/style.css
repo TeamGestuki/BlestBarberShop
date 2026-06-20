@@ -1832,7 +1832,7 @@ img { max-width: 100%; }
 
 .admin-welcome-card-visual {
   display: grid;
-  grid-template-columns: 1.5fr .5fr;
+  grid-template-columns: 1.6fr .4fr;
   align-items: stretch;
   padding: 0;
   overflow: hidden;
