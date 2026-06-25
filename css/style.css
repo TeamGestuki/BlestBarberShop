@@ -1895,8 +1895,72 @@ img { max-width: 100%; }
   }
 }
 
-/* ---- FONDO PATTERN BARBERÍA PARA PANELES ---- */
+/* ==========================================================
+   FONDOS DECORATIVOS CORREGIDOS
+   - Pattern público: se aplica a secciones principales, NO al footer.
+   - Pattern paneles: se mantiene solo en layout admin/user.
+========================================================== */
 
+/* Fondo público para secciones visuales del sitio */
+.hero-section,
+.about-section,
+.services-section,
+.barbers-section,
+.gallery-section,
+.cta-section,
+.sede-header {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before,
+.about-section::before,
+.services-section::before,
+.barbers-section::before,
+.gallery-section::before,
+.cta-section::before,
+.sede-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image: url("../img/indexbackground.webp");
+  background-repeat: repeat;
+  background-size: 350px 350px;
+  background-attachment: fixed;
+  opacity: .04;
+}
+
+/* Mantiene el contenido por encima del pattern */
+.hero-section > .container,
+.about-section > .container,
+.services-section > .container,
+.barbers-section > .container,
+.gallery-section > .container,
+.cta-section > .container,
+.sede-header > .container,
+.cta-bg {
+  position: relative;
+  z-index: 1;
+}
+
+/* El footer NO debe mostrar pattern */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  background-color: #070707 !important;
+  background-image: none !important;
+}
+
+.site-footer::before,
+.site-footer::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Pattern de paneles admin/user */
 .admin-layout {
   position: relative;
   isolation: isolate;
@@ -1911,30 +1975,8 @@ img { max-width: 100%; }
   pointer-events: none;
 
   opacity: .20;
-
   background-image: url("../img/background.webp");
   background-size: 220px 220px;
   background-repeat: repeat;
   background-attachment: fixed;
-}
-
-/* FONDO INDEX */
-
-body {
-  position: relative;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-
-  z-index: 0;
-  pointer-events: none;
-
-  background-image: url("../img/indexbackground.webp");
-  background-repeat: repeat;
-  background-size: 350px;
-
-  opacity: .04;
 }
