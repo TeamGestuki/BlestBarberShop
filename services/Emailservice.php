@@ -1,5 +1,7 @@
 <?php
-// services/EmailService.php
+
+require_once __DIR__ . '/../config/env.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -8,20 +10,20 @@ require_once __DIR__ . '/../libs/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/../libs/PHPMailer/SMTP.php';
 
 class EmailService {
-    
+
     private static function configurarMailer() {
         $mail = new PHPMailer(true);
         $mail->CharSet = 'UTF-8';
-        
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'blestbarber.app@gmail.com'; 
-        $mail->Password   = 'PEDIR CONTRASEÑA'; 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = 465;
 
-        $mail->setFrom('blestbarber.app@gmail.com', 'Blest Barber');
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['SMTP_HOST'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['SMTP_USER'];
+        $mail->Password   = $_ENV['SMTP_PASS'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = $_ENV['SMTP_PORT'];
+
+        $mail->setFrom($_ENV['SMTP_FROM'], $_ENV['SMTP_FROM_NAME']);
         
         return $mail;
     }

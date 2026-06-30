@@ -123,6 +123,18 @@ try {
                   Reservar turno
                 </a>
               </li>
+
+              <li><hr class="dropdown-divider"></li>
+
+              <li>
+                <form action="../controllers/AuthController.php" method="POST">
+                  <input type="hidden" name="action" value="logout">
+                  <button type="submit" class="dropdown-item">
+                    <i class="bi bi-box-arrow-left"></i>
+                    Cerrar sesión
+                  </button>
+                </form>
+              </li>
             </ul>
           </li>
 

@@ -207,7 +207,7 @@ if ($accion === "crear") {
 
         $stmtCrear->execute();
         // ENVÍO DE CORREO DE CONFIRMACIÓN ---
-        require_once '../services/EmailService.php';
+        require_once '../services/Emailservice.php';
 
         //  Obtener el email del usuario usando su ID
         $stmtUser = $conn->prepare("SELECT nombre, email FROM usuarios WHERE id = :id"); //
