@@ -268,7 +268,6 @@ try {
                         <select name="barbero_id"
                                 class="form-control"
                                 required
-                                onchange="this.form.submit()"
                                 <?php echo $sedeSeleccionada === "" ? "disabled" : ""; ?>>
                             <option value="">
                                 <?php echo $sedeSeleccionada === "" ? "Primero elegí una sede" : "Seleccionar barbero"; ?>
@@ -288,7 +287,6 @@ try {
                         <select name="servicio_id"
                                 class="form-control"
                                 required
-                                onchange="this.form.submit()">
                             <option value="">Seleccionar servicio</option>
 
                             <?php foreach ($servicios as $servicio): ?>
@@ -309,7 +307,6 @@ try {
                             class="form-control"
                             min="<?php echo date("Y-m-d"); ?>"
                             value="<?php echo htmlspecialchars($fechaSeleccionada); ?>"
-                            onchange="this.form.submit()"
                             required>
                     </div>
 

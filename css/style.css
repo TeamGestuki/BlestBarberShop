@@ -1963,7 +1963,6 @@ img { max-width: 100%; }
 /* Pattern de paneles admin/user */
 .admin-layout {
   position: relative;
-  isolation: isolate;
   background-color: var(--bg);
 }
 

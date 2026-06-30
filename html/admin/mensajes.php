@@ -19,15 +19,14 @@ $success = $_GET["success"] ?? "";
 $error = $_GET["error"] ?? "";
 
 try {
-    $sql = "SELECT id, nombre, email, asunto, mensaje, fecha_creacion
+    $sql = "SELECT id, nombre, email, asunto, mensaje, creado_en
             FROM contactos
-            ORDER BY fecha_creacion DESC";
+            ORDER BY creado_en DESC";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute();
 
     $mensajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     $mensajes = [];
     $errorDB = true;
@@ -191,7 +190,7 @@ try {
                       <?php echo htmlspecialchars($mensaje["mensaje"]); ?>
                     </td>
                     <td>
-                      <?php echo htmlspecialchars($mensaje["fecha_creacion"]); ?>
+<?php echo htmlspecialchars($mensaje["creado_en"]); ?>
                     </td>
                     <td>
                         <div class="admin-actions">
@@ -220,120 +219,122 @@ try {
                         </div>
                     </td>
                 </tr>
-                <div class="modal fade" id="mensajeModal<?php echo $mensaje["id"]; ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content admin-message-modal">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                            Mensaje de <?php echo htmlspecialchars($mensaje["nombre"]); ?>
-                            </h5>
-
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <p><strong>Email:</strong> <?php echo htmlspecialchars($mensaje["email"]); ?></p>
-
-                            <p>
-                            <strong>Asunto:</strong>
-                            <?php echo !empty($mensaje["asunto"]) ? htmlspecialchars($mensaje["asunto"]) : "Sin asunto"; ?>
-                            </p>
-
-                            <p><strong>Fecha:</strong> <?php echo htmlspecialchars($mensaje["fecha_creacion"]); ?></p>
-
-                            <hr>
-
-                            <p class="admin-message-full">
-                            <?php echo nl2br(htmlspecialchars($mensaje["mensaje"])); ?>
-                            </p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <a 
-                            href="mailto:<?php echo htmlspecialchars($mensaje["email"]); ?>?subject=Respuesta%20Blest%20Barber%20Shop"
-                            class="btn btn-gold">
-                            Responder por email
-                            </a>
-
-                            <button type="button" class="btn btn-outline-gold" data-bs-dismiss="modal">
-                            Cerrar
-                            </button>
-                        </div>
-
-                        </div>
-                    </div>
-                    </div>
-
-            <!-- MODAL ELIMINAR -->
-             
-                    <div class="modal fade"
-                        id="deleteModal<?php echo $mensaje["id"]; ?>"
-                        tabindex="-1"
-                        aria-hidden="true">
-
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content admin-message-modal">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                            Confirmar eliminación
-                            </h5>
-
-                            <button
-                            type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="modal">
-                            </button>
-                        </div>
-
-                        <div class="modal-body text-center">
-                            <i class="bi bi-trash3-fill delete-icon"></i>
-
-                            <h4 class="delete-title">
-                            ¿Deseás eliminar este mensaje?
-                            </h4>
-
-                            <p class="delete-text">
-                            Esta acción no se puede deshacer.
-                            </p>
-                        </div>
-
-                        <div class="modal-footer justify-content-center">
-
-                            <button
-                            type="button"
-                            class="btn btn-outline-gold"
-                            data-bs-dismiss="modal">
-                            Cancelar
-                            </button>
-
-                            <form
-                            action="../../controllers/AdminMensajeController.php"
-                            method="POST">
-
-                            <input
-                                type="hidden"
-                                name="id"
-                                value="<?php echo $mensaje["id"]; ?>">
-
-                            <button
-                                type="submit"
-                                class="btn admin-btn-danger">
-                                Eliminar
-                            </button>
-
-                            </form>
-
-                        </div>
-
-                        </div>
-                    </div>
-                    </div>
-
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
               </tbody>
             </table>
+
+            <?php foreach ($mensajes as $mensaje): ?>
+
+            <div class="modal fade" id="mensajeModal<?php echo $mensaje["id"]; ?>" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content admin-message-modal">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                        Mensaje de <?php echo htmlspecialchars($mensaje["nombre"]); ?>
+                        </h5>
+
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p><strong>Email:</strong> <?php echo htmlspecialchars($mensaje["email"]); ?></p>
+
+                        <p>
+                        <strong>Asunto:</strong>
+                        <?php echo !empty($mensaje["asunto"]) ? htmlspecialchars($mensaje["asunto"]) : "Sin asunto"; ?>
+                        </p>
+
+                        <p><strong>Fecha:</strong> <?php echo htmlspecialchars($mensaje["creado_en"]); ?></p>
+
+                        <hr>
+
+                        <p class="admin-message-full">
+                        <?php echo nl2br(htmlspecialchars($mensaje["mensaje"])); ?>
+                        </p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <a 
+                        href="mailto:<?php echo htmlspecialchars($mensaje["email"]); ?>?subject=Respuesta%20Blest%20Barber%20Shop"
+                        class="btn btn-gold">
+                        Responder por email
+                        </a>
+
+                        <button type="button" class="btn btn-outline-gold" data-bs-dismiss="modal">
+                        Cerrar
+                        </button>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"
+                id="deleteModal<?php echo $mensaje["id"]; ?>"
+                tabindex="-1"
+                aria-hidden="true">
+
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content admin-message-modal">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                        Confirmar eliminación
+                        </h5>
+
+                        <button
+                        type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                        </button>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <i class="bi bi-trash3-fill delete-icon"></i>
+
+                        <h4 class="delete-title">
+                        ¿Deseás eliminar este mensaje?
+                        </h4>
+
+                        <p class="delete-text">
+                        Esta acción no se puede deshacer.
+                        </p>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+
+                        <button
+                        type="button"
+                        class="btn btn-outline-gold"
+                        data-bs-dismiss="modal">
+                        Cancelar
+                        </button>
+
+                        <form
+                        action="../../controllers/AdminMensajeController.php"
+                        method="POST">
+
+                        <input
+                            type="hidden"
+                            name="id"
+                            value="<?php echo $mensaje["id"]; ?>">
+
+                        <button
+                            type="submit"
+                            class="btn admin-btn-danger">
+                            Eliminar
+                        </button>
+
+                        </form>
+
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <?php endforeach; ?>
           </div>
         <?php endif; ?>
 
