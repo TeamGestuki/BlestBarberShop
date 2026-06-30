@@ -206,7 +206,33 @@ if ($accion === "crear") {
         $stmtCrear->bindParam(":observaciones", $observaciones);
 
         $stmtCrear->execute();
+        // ENVÍO DE CORREO DE CONFIRMACIÓN ---
+        require_once '../services/EmailService.php';
 
+        //  Obtener el email del usuario usando su ID
+        $stmtUser = $conn->prepare("SELECT nombre, email FROM usuarios WHERE id = :id"); //
+        $stmtUser->execute([':id' => $usuarioId]); //
+        $userData = $stmtUser->fetch(PDO::FETCH_ASSOC);
+
+        //  Obtener el nombre de la sede y el servicio para el correo
+        $stmtSede = $conn->prepare("SELECT nombre FROM sedes WHERE id = :id"); //
+        $stmtSede->execute([':id' => $sedeId]); //
+        $nombreSede = $stmtSede->fetchColumn();
+
+        $stmtServ = $conn->prepare("SELECT nombre FROM servicios WHERE id = :id"); //
+        $stmtServ->execute([':id' => $servicioId]); //
+        $nombreServicio = $stmtServ->fetchColumn();
+
+        if ($userData && $userData['email']) {
+            EmailService::enviarConfirmacion(
+                $userData['email'], 
+                $userData['nombre'], 
+                $fecha, //
+                $hora,  //
+                $nombreSede, 
+                $nombreServicio
+            );
+        }
         header("Location: ../html/user/panel_usuario.php?success=turno_creado");
         exit;
 
