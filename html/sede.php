@@ -321,7 +321,9 @@ try {
 
                 <div class="col-5">
                   <div class="barber-img-wrap" style="height:100%">
-                      $rutaFoto = !empty($barbero["foto"]) ? htmlspecialchars($barbero["foto"]) : 'img/logo.jpg'; 
+                    <?php
+                    $rutaFoto = !empty($barbero["foto"]) ? htmlspecialchars($barbero["foto"]) : 'img/logo.jpg';
+                    ?>
                     <img src="../<?php echo $rutaFoto; ?>"
                         alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>"
                         class="barber-img"
