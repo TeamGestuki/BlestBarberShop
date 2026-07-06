@@ -134,16 +134,39 @@ VALUES
 INSERT INTO sedes
 (nombre, direccion, mapa_embed, foto, activo)
 VALUES
-('Sede Naón', 'Montiel 1551, Barrio Naón, CABA', NULL, NULL, 1),
-('Sede Villa Luro', 'Avenida Rivadavia 10545, Villa Luro, CABA', NULL, NULL, 1);
+('Sede Naón', 'Montiel 1551, Barrio Naón, CABA', '<iframe src="https://maps.google.com/maps?q=Montiel%201551,%20Barrio%20Na%C3%B3n,%20CABA&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0; min-height:380px;" allowfullscreen="" loading="lazy"></iframe>', 'img/sucursalnaon.webp', 1),
+('Sede Villa Luro', 'Avenida Rivadavia 10545, Villa Luro, CABA', '<iframe src="https://maps.google.com/maps?q=Avenida%20Rivadavia%2010545,%20Villa%20Luro,%20CABA&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0; min-height:380px;" allowfullscreen="" loading="lazy"></iframe>', 'img/sucursalluro.webp', 1);
 
 INSERT INTO barberos
 (nombre, especialidad, foto, sede_id, activo)
 VALUES
-('Barbero Naón 1', 'Fades y barba', NULL, 1, 1),
-('Barbero Naón 2', 'Corte clásico', NULL, 1, 1),
-('Barbero Villa Luro 1', 'Freestyle', NULL, 2, 1),
-('Barbero Villa Luro 2', 'Color y mechas', NULL, 2, 1);
+('Juli', 'Fades y barba', 'img/juli.webp', 1, 1),
+('Mauri', 'Corte clásico', 'img/mauri.webp', 1, 1),
+('Tincho', 'Freestyle', 'img/tinchos.webp', 2, 1),
+('Tommy', 'Color y mechas', 'img/tommys.webp', 2, 1);
+
+
+INSERT INTO sede_galeria (sede_id, foto, activo) VALUES 
+(1, 'img/cortenaon.webp', 1),
+(1, 'img/cortenaon2.webp', 1),
+(1, 'img/cortenaon3.webp', 1),
+(1, 'img/cortenaon4.webp', 1),
+(1, 'img/cortenaon5.webp', 1),
+(1, 'img/cortenaon6.webp', 1),
+(2, 'img/corteluro.webp', 1),
+(2, 'img/corteluro2.webp', 1),
+(2, 'img/corteluro3.webp', 1),
+(2, 'img/corteluro4.webp', 1),
+(2, 'img/corteluro5.webp', 1),
+(2, 'img/corteluro6.webp', 1);
+
+
+INSERT INTO barbero_fotos (barbero_id, foto, activo) VALUES 
+(1, 'img/cortenaon.webp', 1),
+(1, 'img/cortenaon2.webp', 1),
+(2, 'img/cortenaon3.webp', 1),
+(3, 'img/corteluro.webp', 1),
+(4, 'img/corteluro2.webp', 1);
 
 INSERT INTO servicios
 (nombre, descripcion, precio, duracion_min, activo)

@@ -321,10 +321,11 @@ try {
 
                 <div class="col-5">
                   <div class="barber-img-wrap" style="height:100%">
-                    <img src="../<?php echo htmlspecialchars($barbero["foto"]); ?>"
-                         alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>"
-                         class="barber-img"
-                         style="height:100%;min-height:260px">
+                      $rutaFoto = !empty($barbero["foto"]) ? htmlspecialchars($barbero["foto"]) : 'img/logo.jpg'; 
+                    <img src="../<?php echo $rutaFoto; ?>"
+                        alt="<?php echo htmlspecialchars($barbero["nombre"]); ?>"
+                        class="barber-img"
+                        style="height:100%;min-height:260px">
 
                     <div class="barber-overlay">
                       <a href="<?php echo $linkReserva; ?>" class="btn btn-gold btn-sm">Reservar</a>
